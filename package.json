@@ -1,6 +1,6 @@
 {
   "name": "@neocord/utils",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Utilities to use within the NeoCord library.",
   "author": "MeLike2D <gino@melike2d.me>",
   "homepage": "https://github.com/melike2d/neocord#readme",
