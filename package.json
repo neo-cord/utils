@@ -1,9 +1,9 @@
 {
   "name": "@neocord/utils",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Utilities to use within the NeoCord library.",
   "author": "MeLike2D <gino@melike2d.me>",
-  "homepage": "https://github.com/melike2d/neocord#readme",
+  "homepage": "https://github.com/neo-cord/utils#readme",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "typings/index.d.ts",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/melike2d/neocord.git"
+    "url": "git+https://github.com/neo-cord/utils.git"
   },
   "scripts": {
     "build": "rm -rf dist && tsc --removeComments",
@@ -21,7 +21,7 @@
     "bundle:types": "dts-bundle --name @neocord/utils --main ./dist --removeSource --outputAsModuleFolder --baseDir ./dist --out ../typings/index.d.ts"
   },
   "bugs": {
-    "url": "https://github.com/melike2d/neocord/issues"
+    "url": "https://github.com/neo-cord/utils/issues"
   },
   "devDependencies": {
     "@types/node": "^14.6.2",
