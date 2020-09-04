@@ -1,6 +1,6 @@
 {
   "name": "@neocord/utils",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Utilities to use within the NeoCord library.",
   "author": "MeLike2D <gino@melike2d.me>",
   "homepage": "https://github.com/neo-cord/utils#readme",
@@ -29,5 +29,6 @@
     "@typescript-eslint/parser": "^3.10.1",
     "eslint": "^7.7.0",
     "typescript": "^4.0.2"
-  }
+  },
+  "dependencies": {}
 }

@@ -8,7 +8,7 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
   /**
    * Flags for this BitField (Should be implemented in child classes)
    */
-  public static FLAGS: Record<string, number> = {} as const;
+  public static FLAGS: any = {} as const;
 
   /**
    * The default flags for the bitfield
