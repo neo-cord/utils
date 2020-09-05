@@ -108,7 +108,7 @@ export function walk(directory: string, options: WalkOptions = {}): string[] {
     for (const file of readdirSync(path)) {
       const joined = join(path, file), stats = lstatSync(joined);
       if (stats.isFile()) {
-        if (options.extensions && options.extensions.some(e => file.endsWith(e))) continue;
+        if (options.extensions && !options.extensions.some(e => file.endsWith(e))) continue;
         files.push(joined);
       } else if (stats.isDirectory()) {
         if (options.depth) {
