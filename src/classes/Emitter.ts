@@ -4,19 +4,15 @@
  * See the LICENSE file in the project root for more details.
  */
 
+import { define } from "../functions";
+
 export class Emitter {
   /**
    * Event listeners attached to this emitter.
    * @private
    */
-  private readonly _listeners: Dictionary<Set<Listener>>;
-
-  /**
-   * Creates a new Emitter.
-   */
-  public constructor() {
-    this._listeners = {};
-  }
+  @define({ writable: true, value: {} })
+  private readonly _listeners!: Dictionary<Set<Listener>>;
 
   /**
    * Adds a listener to this dispatcher.

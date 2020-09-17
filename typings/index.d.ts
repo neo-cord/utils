@@ -1,17 +1,12 @@
 import type { EventEmitter } from "events";
 
-export global {
+global {
   type Dictionary<V = any> = Record<string, V>;
   type EventEmitterLike = Emitter | EventEmitter;
   type Tuple<L = any, R = any> = [ L, R ];
 }
 
 export class Emitter {
-  /**
-   * Creates a new Emitter.
-   */
-  constructor();
-
   /**
    * Adds a listener to this dispatcher.
    * @param event The event to listen for.
@@ -361,7 +356,7 @@ export class Collection<K, V> extends Map<K, V> {
 }
 
 /**
- * @file modified https://github.com/Naval-Base/ms
+ * @file modified version of https://github.com/Naval-Base/ms
  */
 export enum Unit {
   SECOND = 1000,
@@ -577,6 +572,12 @@ export function mergeObjects<O extends Dictionary = Dictionary>(...objects: Part
 export function isObject(input: unknown): input is Dictionary;
 
 /**
+ * Calls Object#defineProperty on a method or property.
+ * @param descriptor The descriptor to pass.
+ */
+export function define(descriptor: PropertyDescriptor): PropertyDecorator;
+
+/**
  * Flatten an object.
  * @param obj
  * @param props
@@ -588,4 +589,3 @@ export interface WalkOptions {
   depth?: number;
   extensions?: string[];
 }
-

@@ -1,8 +1,8 @@
 {
   "name": "@neocord/utils",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Utilities to use within the NeoCord library.",
-  "author": "MeLike2D <gino@melike2d.me>",
+  "author": "MeLike2D",
   "homepage": "https://github.com/neo-cord/utils#readme",
   "license": "MIT",
   "main": "dist/index.js",

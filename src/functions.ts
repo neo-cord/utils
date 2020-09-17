@@ -151,6 +151,17 @@ export function isObject(input: unknown): input is Dictionary {
 }
 
 /**
+ * Calls Object#defineProperty on a method or property.
+ * @param descriptor The descriptor to pass.
+ */
+export function define(descriptor: PropertyDescriptor): PropertyDecorator {
+  return (target: Dictionary, propertyKey: string | symbol, _descriptor = {}): void => {
+    Object.defineProperty(target, propertyKey, Object.assign(descriptor, _descriptor));
+    return;
+  };
+}
+
+/**
  * Flatten an object.
  * @param obj
  * @param props
@@ -177,4 +188,3 @@ export interface WalkOptions {
   depth?: number;
   extensions?: string[];
 }
-
