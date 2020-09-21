@@ -5,7 +5,7 @@
 > Utilities that are used all across the [NeoCord](https://github.com/neo-cord) library. <br/>
 > [NeoCord Support](https://discord.gg/5WD9KhF) &bull; [Github](https://github.com/neo-cord/utils)
 
-Requires **node.js v14.x.x** to work.
+Requires **node.js v8.x.x** or above to work.
 
 ```shell script
 yarn add @neocord/utils
