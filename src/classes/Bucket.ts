@@ -75,8 +75,8 @@ export class Bucket {
     this.interval = interval;
     this.lastReset = this.tokens = this.lastSend = 0;
 
-    this.latencyRef = options.latencyRef || { latency: 0 };
-    this.reservedTokens = options.reservedTokens || 0;
+    this.latencyRef = options.latencyRef ?? { latency: 0 };
+    this.reservedTokens = options.reservedTokens ?? 0;
     this._queue = [];
   }
 
@@ -145,12 +145,12 @@ export class Bucket {
         this.tokens < this.tokenLimit
           ? this.latencyRef.latency
           : Math.max(
-              0,
-              this.lastReset +
+            0,
+            this.lastReset +
                 this.interval +
                 this.tokenLimit * this.latencyRef.latency -
                 Date.now()
-            )
+          )
       );
     }
   }

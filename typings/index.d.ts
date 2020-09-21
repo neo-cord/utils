@@ -1,6 +1,6 @@
 import type { EventEmitter } from "events";
 
-global {
+declare global {
   type Dictionary<V = any> = Record<string, V>;
   type EventEmitterLike = Emitter | EventEmitter;
   type Tuple<L = any, R = any> = [ L, R ];
