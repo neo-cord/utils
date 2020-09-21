@@ -18,6 +18,7 @@
     "build": "rm -rf dist && tsc --removeComments",
     "build:types": "tsc -d",
     "lint": "eslint . --ext .ts",
+    "format":  "prettier --write src/",
     "bundle:types": "dts-bundle --name @neocord/utils --main ./dist --removeSource --outputAsModuleFolder --baseDir ./dist --out ../typings/index.d.ts"
   },
   "bugs": {
@@ -28,6 +29,7 @@
     "@typescript-eslint/eslint-plugin": "^4.1.1",
     "@typescript-eslint/parser": "^4.1.1",
     "eslint": "^7.9.0",
+    "prettier": "^2.1.2",
     "typescript": "^4.0.3"
   },
   "engines": {

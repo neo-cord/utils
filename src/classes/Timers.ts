@@ -7,12 +7,14 @@
 export abstract class Timers {
   /**
    * Currently running intervals.
+   * @type {Set<NodeJS.Timeout>}
    * @private
    */
   private static readonly _intervals: Set<NodeJS.Timeout> = new Set();
 
   /**
    * Currently waiting timeouts.
+   * @type {Set<NodeJS.Timeout>}
    * @private
    */
   private static readonly _timeouts: Set<NodeJS.Timeout> = new Set();
@@ -27,11 +29,15 @@ export abstract class Timers {
 
   /**
    * Set an interval.
-   * @param fn The function to call.
-   * @param delay The delay between each call.
-   * @param args The args to pass.
+   * @param {Fn} fn The function to call.
+   * @param {number} delay The delay between each call.
+   * @param {...*} [args] The args to pass.
    */
-  public static setInterval(fn: Fn, delay: number, ...args: any[]): NodeJS.Timeout {
+  public static setInterval(
+    fn: Fn,
+    delay: number,
+    ...args: any[]
+  ): NodeJS.Timeout {
     const interval = setInterval(fn, delay, ...args);
     void this._intervals.add(interval);
     return interval;
@@ -39,7 +45,7 @@ export abstract class Timers {
 
   /**
    * Clears an interval.
-   * @param interval The interval to clear.
+   * @param {NodeJS.Timeout} interval The interval to clear.
    */
   public static clearInterval(interval: NodeJS.Timeout): typeof Timers {
     void this._intervals.delete(interval);
@@ -49,11 +55,15 @@ export abstract class Timers {
 
   /**
    * Set an interval.
-   * @param fn The function to call.
-   * @param delay The delay between each call.
-   * @param args The args to pass.
+   * @param {Fn} fn The function to call.
+   * @param {number} delay The delay between each call.
+   * @param {...*} args The args to pass.
    */
-  public static setTimeout(fn: Fn, delay: number, ...args: any[]): NodeJS.Timeout {
+  public static setTimeout(
+    fn: Fn,
+    delay: number,
+    ...args: any[]
+  ): NodeJS.Timeout {
     const timeout = setTimeout(() => {
       void this._timeouts.delete(timeout);
       void fn(...args);
@@ -65,7 +75,7 @@ export abstract class Timers {
 
   /**
    * Clears an interval.
-   * @param interval The interval to clear.
+   * @param {NodeJS.Timeout} interval The interval to clear.
    */
   public static clearTimeout(interval: NodeJS.Timeout): typeof Timers {
     void this._timeouts.delete(interval);

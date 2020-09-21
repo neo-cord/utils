@@ -13,34 +13,39 @@ export enum Unit {
   YEAR = DAY * 365.25,
 }
 
-const separators = [ " ", ".", ",", "-" ];
+const separators = [" ", ".", ",", "-"];
 const regex = /^(-?(?:\d+)?\.?\d+)\s*([a-z]+)?$/;
 
 export class Duration {
   private static conversions = new Collection<string[], number>([
-    [ [ "years", "year", "yrs", "yr", "y" ], Unit.YEAR ],
-    [ [ "weeks", "week", "w" ], Unit.WEEK ],
-    [ [ "days", "day", "d" ], Unit.DAY ],
-    [ [ "hours", "hour", "hrs", "hr", "h" ], Unit.HOUR ],
-    [ [ "minutes", "minute", "mins", "min", "m" ], Unit.MINUTE ],
-    [ [ "seconds", "second", "secs", "sec", "s" ], Unit.SECOND ],
+    [["years", "year", "yrs", "yr", "y"], Unit.YEAR],
+    [["weeks", "week", "w"], Unit.WEEK],
+    [["days", "day", "d"], Unit.DAY],
+    [["hours", "hour", "hrs", "hr", "h"], Unit.HOUR],
+    [["minutes", "minute", "mins", "min", "m"], Unit.MINUTE],
+    [["seconds", "second", "secs", "sec", "s"], Unit.SECOND],
   ]);
 
   /**
    * Parses a number into a string.
-   * @param number The number to parse.
-   * @param long Whether or not to return the long version.
-   * @since 1.0.0
+   * @param {number} number The number to parse.
+   * @param {boolean} [long=false] Whether or not to return the long version.
    */
   public static parse(number: number, long?: boolean): string;
   /**
    * Parses a string into milliseconds.
    * @param string The string to parse.
-   * @since 1.0.0
    */
   public static parse(string: string): number;
+
+  /**
+   * Parses a string or number into a string or milliseconds.
+   * @param {number | string} value The string or number to parse.
+   * @param {boolean} [long=false] Whether to format the number longer.
+   */
   public static parse(value: string | number, long = false): number | string {
-    let abs, ms = 0;
+    let abs,
+      ms = 0;
     if (typeof value === "string" && value.length) {
       if (value.length < 101) {
         const units = Duration._tokenize(value.toLowerCase());
@@ -58,10 +63,14 @@ export class Duration {
 
     if (typeof value === "number" && isFinite(value)) {
       abs = Math.abs(value);
-      if (abs >= Unit.DAY) return Duration._pluralize(value, Unit.DAY, [ "d", "day" ], long);
-      if (abs >= Unit.HOUR) return Duration._pluralize(value, Unit.HOUR, [ "h", "hour" ], long);
-      if (abs >= Unit.MINUTE) return Duration._pluralize(value, Unit.MINUTE, [ "m", "minute" ], long);
-      if (abs >= Unit.SECOND) return Duration._pluralize(value, Unit.SECOND, [ "s", "second" ], long);
+      if (abs >= Unit.DAY)
+        return Duration._pluralize(value, Unit.DAY, ["d", "day"], long);
+      if (abs >= Unit.HOUR)
+        return Duration._pluralize(value, Unit.HOUR, ["h", "hour"], long);
+      if (abs >= Unit.MINUTE)
+        return Duration._pluralize(value, Unit.MINUTE, ["m", "minute"], long);
+      if (abs >= Unit.SECOND)
+        return Duration._pluralize(value, Unit.SECOND, ["s", "second"], long);
       return `${value}${long ? " milliseconds" : "ms"}`;
     }
 
@@ -69,12 +78,15 @@ export class Duration {
   }
 
   /**
+   * Tokenizes an input string.
+   * @param {string} str
    * @private
    */
   private static _tokenize(str: string): string[] {
     const units = [];
 
-    let buf = "", letter = false;
+    let buf = "",
+      letter = false;
     for (const char of str) {
       if (separators.includes(char)) buf += char;
       else if (isNaN(parseInt(char, 10))) {
@@ -102,14 +114,23 @@ export class Duration {
    * @private
    */
   private static _convert(num: number, unit: string): number {
-    return Duration.conversions.find((_v, k) => k.includes(unit)) as number * num;
+    return (
+      (Duration.conversions.find((_v, k) => k.includes(unit)) as number) * num
+    );
   }
 
   /**
    * @private
    */
-  private static _pluralize(ms: number, base: number, types: Tuple<string, string>, long = false): string {
+  private static _pluralize(
+    ms: number,
+    base: number,
+    types: Tuple<string, string>,
+    long = false
+  ): string {
     const plural = Math.abs(ms) >= base * 1.5;
-    return `${Math.round(ms / base)}${long ? ` ${types[1]}${plural ? "s" : ""}` : types[0]}`;
+    return `${Math.round(ms / base)}${
+      long ? ` ${types[1]}${plural ? "s" : ""}` : types[0]
+    }`;
   }
 }

@@ -7,51 +7,55 @@
 import { join } from "path";
 import { lstatSync, readdirSync } from "fs";
 import { Timers } from "./classes/Timers";
+import { Duration } from "./classes/Duration";
 
 import type { Class } from "./classes/Extender";
 
 /**
  * A helper function for determining whether something is a class.
- * @param input
- * @since 2.0.0
+ * @param {*} input
+ * @returns {boolean} Whether the input was a class.
  */
 export function isClass(input: unknown): input is Class<unknown> {
   return (
-    typeof input === "function"
-    && typeof input.prototype === "object"
-    && input.toString().substring(0, 5) === "class"
+    typeof input === "function" &&
+    typeof input.prototype === "object" &&
+    input.toString().substring(0, 5) === "class"
   );
 }
 
 /**
  * A helper function for capitalizing the first letter in the sentence.
- * @param str
- * @param lowerRest
- * @since 2.0.0
+ * @param {string} str
+ * @param {boolean} [lowerRest=true]
  */
-export function capitalize(str: string, lowerRest = false): string {
-  const [ f, ...r ] = str.split("");
-  return `${f.toUpperCase()}${lowerRest ? r.join("").toLowerCase() : r.join("")}`;
+export function capitalize(str: string, lowerRest = true): string {
+  const [f, ...r] = str.split("");
+  return `${f.toUpperCase()}${
+    lowerRest ? r.join("").toLowerCase() : r.join("")
+  }`;
 }
 
 /**
  * A helper function for determining if a value is an event emitter.
- * @param input
- * @since 2.0.0
+ * @param {unknown} input
+ * @returns {boolean} Whether the input was an emitter.
  */
 export function isEmitter(input: unknown): input is EventEmitterLike {
-  return (input !== "undefined" && input !== void 0)
-    && typeof (input as EventEmitterLike).on === "function"
-    && typeof (input as EventEmitterLike).emit === "function";
+  return (
+    input !== "undefined" &&
+    input !== void 0 &&
+    typeof (input as EventEmitterLike).on === "function" &&
+    typeof (input as EventEmitterLike).emit === "function"
+  );
 }
 
 /**
  * Returns an array.
- * @param v
- * @since 2.0.0
+ * @param {*[] | *} value
  */
-export function array<T>(v: T | T[]): T[] {
-  return Array.isArray(v) ? v : [ v ];
+export function array<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value];
 }
 
 /**
@@ -60,9 +64,7 @@ export function array<T>(v: T | T[]): T[] {
  * @since 2.0.0
  */
 export function isString(value: unknown): value is string {
-  return value !== null
-    && value !== "undefined"
-    && typeof value === "string";
+  return value !== null && value !== "undefined" && typeof value === "string";
 }
 
 /**
@@ -70,9 +72,11 @@ export function isString(value: unknown): value is string {
  * @param value
  */
 export function isPromise(value: unknown): value is Promise<unknown> {
-  return value
-    && typeof (value as Promise<unknown>).then === "function"
-    && typeof (value as Promise<unknown>).catch === "function";
+  return (
+    value &&
+    typeof (value as Promise<unknown>).then === "function" &&
+    typeof (value as Promise<unknown>).catch === "function"
+  );
 }
 
 /**
@@ -80,35 +84,49 @@ export function isPromise(value: unknown): value is Promise<unknown> {
  * @param obj The object.
  * @param key The key.
  */
-export function has<O extends Dictionary, K extends keyof O>(obj: O, key: K): obj is O & Required<Pick<O, K>> {
+export function has<O extends Dictionary, K extends keyof O>(
+  obj: O,
+  key: K
+): obj is O & Required<Pick<O, K>> {
   return Reflect.has(obj, key);
 }
 
 /**
  * Pauses the event loop for a set duration of time.
- * @param ms The duration in milliseconds.
+ * @param {number | string} ms The duration in milliseconds.
+ * @returns {Promise<NodeJS.Timeout>}
  */
-export function sleep(ms: number): Promise<void> {
-  return new Promise(r => Timers.setTimeout(r, ms));
+export function sleep(ms: number | string): Promise<NodeJS.Timeout> {
+  const _ms = typeof ms === "string" ? Duration.parse(ms) : ms;
+
+  return new Promise((r) => Timers.setTimeout(r, _ms));
 }
 
 /**
  * Walks a directory.
- * @param directory The directory to walk.
- * @param options Options for declaring the depth and extensions.
+ * @param {string} directory The directory to walk.
+ * @param {WalkOptions} options Options for declaring the depth and extensions.
  */
 export function walk(directory: string, options: WalkOptions = {}): string[] {
-  options = Object.assign({
-    depth: null,
-    extensions: [ ".js", ".ts", ".json" ]
-  }, options);
+  options = Object.assign(
+    {
+      depth: null,
+      extensions: [".js", ".ts", ".json"],
+    },
+    options
+  );
 
+  let depth = 0;
   const read = (path: string, files: string[] = []) => {
-    let depth = 0;
     for (const file of readdirSync(path)) {
-      const joined = join(path, file), stats = lstatSync(joined);
+      const joined = join(path, file),
+        stats = lstatSync(joined);
       if (stats.isFile()) {
-        if (options.extensions && !options.extensions.some(e => file.endsWith(e))) continue;
+        if (
+          options.extensions &&
+          !options.extensions.some((e) => file.endsWith(e))
+        )
+          continue;
         files.push(joined);
       } else if (stats.isDirectory()) {
         if (options.depth) {
@@ -128,14 +146,15 @@ export function walk(directory: string, options: WalkOptions = {}): string[] {
 
 /**
  * Merges objects into one.
- * @param objects The objects to merge.
+ * @param {Dictionary} objects The objects to merge.
  */
-export function mergeObjects<O extends Dictionary = Dictionary>(...objects: Partial<O>[]): O {
+export function mergeObjects<O extends Dictionary = Dictionary>(
+  ...objects: Partial<O>[]
+): O {
   const o: Dictionary = {};
   for (const object of objects) {
     for (const key of Object.keys(object)) {
-      if (o[key] === null || o[key] === void 0)
-        o[key] = object[key];
+      if (o[key] === null || o[key] === void 0) o[key] = object[key];
     }
   }
 
@@ -152,20 +171,18 @@ export function isObject(input: unknown): input is Dictionary {
 
 /**
  * Calls Object#defineProperty on a method or property.
- * @param descriptor The descriptor to pass.
+ * @param {PropertyDescriptor} descriptor The descriptor to pass.
  */
 export function define(descriptor: PropertyDescriptor): PropertyDecorator {
-  return (target: Dictionary, propertyKey: string | symbol, _descriptor = {}): void => {
-    Object.defineProperty(target, propertyKey, Object.assign(descriptor, _descriptor));
-    return;
+  return (target: Dictionary, propertyKey: string | symbol): void => {
+    Object.defineProperty(target, propertyKey, descriptor);
   };
 }
 
 /**
  * Flatten an object.
- * @param obj
- * @param props
- * @since 1.0.0
+ * @param {*} obj
+ * @param {...*} [props]
  */
 export function flatten(obj: unknown, ...props: any[]): any {
   if (!isObject(obj)) return obj;
@@ -174,9 +191,13 @@ export function flatten(obj: unknown, ...props: any[]): any {
   for (const prop of props) {
     const element = obj[prop];
     const elemIsObj = isObject(element);
-    const valueOf = elemIsObj && typeof element.valueOf === "function" ? element.valueOf() : null;
+    const valueOf =
+      elemIsObj && typeof element.valueOf === "function"
+        ? element.valueOf()
+        : null;
 
-    if (Array.isArray(element)) out[prop] = element.map((e: Array<any>) => flatten(e));
+    if (Array.isArray(element))
+      out[prop] = element.map((e: Array<any>) => flatten(e));
     else if (typeof valueOf !== "object") out[prop] = valueOf;
     else if (!elemIsObj) out[prop] = element;
   }

@@ -9,15 +9,24 @@ import { define } from "../functions";
 export class Emitter {
   /**
    * Event listeners attached to this emitter.
+   * @type {Dictionary<Set<Listener>>}
    * @private
    */
-  @define({ writable: true, value: {} })
   private readonly _listeners!: Dictionary<Set<Listener>>;
 
   /**
-   * Adds a listener to this dispatcher.
-   * @param event The event to listen for.
-   * @param listener The event listener.
+   * Creates a new instanceof Emitter.
+   */
+  public constructor() {
+    define({
+      value: {},
+    })(this, "_listeners");
+  }
+
+  /**
+   * Adds a listener to this emitter.
+   * @param {string} event The event to listen for.
+   * @param {Listener} listener The event listener.
    */
   public on(event: string, listener: Listener): this {
     if (!this._listeners[event]) {
@@ -29,9 +38,9 @@ export class Emitter {
   }
 
   /**
-   * Adds a listener to this dispatcher then removes it when an event is dispatched.
-   * @param event The event to listen for.
-   * @param listener The event listener.
+   * Adds a listener to this emitter then removes it when an event is dispatched.
+   * @param {string} event The event to listen for.
+   * @param {Listener} listener The event listener.
    */
   public once(event: string, listener: Listener): this {
     const _listener = (...args: any[]) => {
@@ -44,8 +53,8 @@ export class Emitter {
 
   /**
    * Removes a listener from an event.
-   * @param event The event to remove the listener from.
-   * @param listener The listener to remove.
+   * @param {string} event The event to remove the listener from.
+   * @param {Listener} listener The listener to remove.
    */
   public removeListener(event: string, listener: Listener): boolean {
     if (!(event in this._listeners) || !this._listeners[event].has(listener)) {
@@ -62,8 +71,8 @@ export class Emitter {
 
   /**
    * Dispatch an event.
-   * @param event The event to dispatch.
-   * @param args The arguments to provide.
+   * @param {string} event The event to dispatch.
+   * @param {...*} [args] The arguments to provide.
    */
   public emit(event: string, ...args: any[]): number {
     if (!this.listenerCount(event)) {
@@ -75,7 +84,8 @@ export class Emitter {
       try {
         listener(...args);
         count++;
-      } catch {
+      } catch (e) {
+        void e;
         // no-op
       }
     }
@@ -84,14 +94,13 @@ export class Emitter {
   }
 
   /**
-   * Get the total listener count of this dispatcher or of a single event.
-   * @param event The event.
+   * Get the total listener count of this emitter or of a single event.
+   * @param {string} [event] The event.
+   * @returns {number} The amount of listeners for the event or all listeners..
    */
   public listenerCount(event?: string): number {
     if (event) {
-      return this._listeners[event]
-        ? this._listeners[event].size
-        : 0;
+      return this._listeners[event] ? this._listeners[event].size : 0;
     }
 
     let count = 0;
