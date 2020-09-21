@@ -8,36 +8,42 @@ global {
 
 export class Emitter {
   /**
-   * Adds a listener to this dispatcher.
-   * @param event The event to listen for.
-   * @param listener The event listener.
+   * Creates a new instanceof Emitter.
+   */
+  constructor();
+
+  /**
+   * Adds a listener to this emitter.
+   * @param {string} event The event to listen for.
+   * @param {Listener} listener The event listener.
    */
   on(event: string, listener: Listener): this;
 
   /**
-   * Adds a listener to this dispatcher then removes it when an event is dispatched.
-   * @param event The event to listen for.
-   * @param listener The event listener.
+   * Adds a listener to this emitter then removes it when an event is dispatched.
+   * @param {string} event The event to listen for.
+   * @param {Listener} listener The event listener.
    */
   once(event: string, listener: Listener): this;
 
   /**
    * Removes a listener from an event.
-   * @param event The event to remove the listener from.
-   * @param listener The listener to remove.
+   * @param {string} event The event to remove the listener from.
+   * @param {Listener} listener The listener to remove.
    */
   removeListener(event: string, listener: Listener): boolean;
 
   /**
    * Dispatch an event.
-   * @param event The event to dispatch.
-   * @param args The arguments to provide.
+   * @param {string} event The event to dispatch.
+   * @param {...*} [args] The arguments to provide.
    */
   emit(event: string, ...args: any[]): number;
 
   /**
-   * Get the total listener count of this dispatcher or of a single event.
-   * @param event The event.
+   * Get the total listener count of this emitter or of a single event.
+   * @param {string} [event] The event.
+   * @returns {number} The amount of listeners for the event or all listeners..
    */
   listenerCount(event?: string): number;
 }
@@ -52,29 +58,29 @@ export abstract class Timers {
 
   /**
    * Set an interval.
-   * @param fn The function to call.
-   * @param delay The delay between each call.
-   * @param args The args to pass.
+   * @param {Fn} fn The function to call.
+   * @param {number} delay The delay between each call.
+   * @param {...*} [args] The args to pass.
    */
   static setInterval(fn: Fn, delay: number, ...args: any[]): NodeJS.Timeout;
 
   /**
    * Clears an interval.
-   * @param interval The interval to clear.
+   * @param {NodeJS.Timeout} interval The interval to clear.
    */
   static clearInterval(interval: NodeJS.Timeout): typeof Timers;
 
   /**
    * Set an interval.
-   * @param fn The function to call.
-   * @param delay The delay between each call.
-   * @param args The args to pass.
+   * @param {Fn} fn The function to call.
+   * @param {number} delay The delay between each call.
+   * @param {...*} args The args to pass.
    */
   static setTimeout(fn: Fn, delay: number, ...args: any[]): NodeJS.Timeout;
 
   /**
    * Clears an interval.
-   * @param interval The interval to clear.
+   * @param {NodeJS.Timeout} interval The interval to clear.
    */
   static clearTimeout(interval: NodeJS.Timeout): typeof Timers;
 }
@@ -84,30 +90,31 @@ type Fn = (...args: any[]) => any;
 export class Extender<S extends Dictionary<Class<any>>> {
   /**
    * All of the structures that can be extended.
+   * @type {Map<string, Class>}
    */
   readonly structures: Map<keyof S, Class<any>>;
   /**
    * Whether or not this extender is immutable.
+   * @type {boolean}
    */
   immutable: boolean;
 
   /**
-   * Creates a new extender instance.
-   * @param structures Pre-defined structures.
+   * @param {Dictionary} structures Pre-defined structures.
    */
   constructor(structures?: S);
 
   /**
    * Creates a new immutable extender.
-   * @param structures The pre-defined structures.
+   * @param {Dictionary} structures The pre-defined structures.
    * @constructor
    */
   static Immutable<S extends Dictionary<Class<any>>>(structures: S): Extender<S>;
 
   /**
    * Adds a new structure to this extender.
-   * @param name The name of this extender.
-   * @param structure
+   * @param {string} name The name of this extender.
+   * @param {*} structure
    */
   add(name: string, structure: any): this;
 
@@ -119,8 +126,8 @@ export class Extender<S extends Dictionary<Class<any>>> {
 
   /**
    * Extend a defined structures.
-   * @param name The structure to extend.
-   * @param extender The extender function.
+   * @param {string} name The structure to extend.
+   * @param {ExtenderFunction} extender The extender function.
    */
   extend<K extends keyof S, E extends S[K]>(name: K, extender: ExtenderFunction<S[K], E>): Promise<this>;
 }
@@ -131,45 +138,51 @@ export type Class<T> = new (...args: any[]) => T;
 export class Bucket {
   /**
    * How many tokens the bucket has consumed in this interval.
+   * @type {number}
    */
   tokens: number;
   /**
    * Timestamp of last token cleaning.
+   * @type {number}
    */
   lastReset: number;
   /**
    * Timestamp of last token consumption.
+   * @type {number}
    */
   lastSend: number;
   /**
    * The max number tokens the bucket can consume per interval.
+   * @type {number}
    */
   tokenLimit: number;
   /**
    * How long (in ms) to wait between clearing used tokens.`
+   * @type {number}
    */
   interval: number;
   /**
    * A latency reference object.
+   * @type {BucketLatencyRef}
    */
   latencyRef: BucketLatencyRef;
   /**
    * The number of reserved tokens.
+   * @type {number}
    */
   reservedTokens: number;
 
   /**
-   * @param tokenLimit
-   * @param interval
-   * @param options
+   * @param {number} tokenLimit
+   * @param {number} interval
+   * @param {BucketOptions} [options={}]
    */
   constructor(tokenLimit: number, interval: number, options?: BucketOptions);
 
   /**
    * Queue something in the Bucket
-   * @param func A callback to call when a token can be consumed
-   * @param priority Whether or not the callback should use reserved tokens
-   * @since 1.0.0
+   * @param {CallableFunction} func A callback to call when a token can be consumed
+   * @param {boolean} [priority=false] Whether or not the callback should use reserved tokens
    */
   queue(func: CallableFunction, priority?: boolean): void;
 }
@@ -187,86 +200,85 @@ interface BucketLatencyRef {
 export class AsyncQueue {
   /**
    * The remaining promises that are in the queue.
+   * @type {number}
    */
   get remaining(): number;
 
   /**
    * Waits for the last promise to resolve and queues a new one.
+   * @returns {Promise<void>}
    */
   wait(): Promise<void>;
 
   /**
    * Enqueues a new promise.
+   * @returns {Promise<void>}
    */
   enqueue(): void;
 
   /**
    * Frees the queue's lock so the next promise can resolve.
+   * @returns {void}
    */
   next(): void;
 }
 
-export class Snowflake {
+export abstract class Snowflake {
   /**
-   * The snowflake.
+   * Transforms an ID into binary.
+   * @param {string} snowflake The ID to transform.
+   * @returns {string}
    */
-  readonly id: BigInt;
-  /**
-   * The timestamp in which this snowflake was created.
-   */
-  readonly timestamp: number;
-  /**
-   * The worker id that generated this snowflake.
-   */
-  readonly workerId: number;
-  /**
-   * The ID of the process that generated this snowflake.
-   */
-  readonly processId: number;
-  /**
-   * The increment stored in the snowflake.
-   */
-  readonly increment: number;
+  static toBinary(snowflake: snowflake): string;
 
   /**
-   * Creates a new Snowflake.
-   * @param id
+   * Transforms an ID from binary to a decimal string.
+   * @param {string} binary The binary string to be transformed.
+   * @returns {string}
    */
-  constructor(id: string | BigInt);
+  static fromBinary(binary: string): snowflake;
 
   /**
-   * When this snowflake was created.
+   * Deconstructs a Discord Snowflake.
+   * @param {snowflake} snowflake
+   * @param {number} epoch The epoch to use when deconstructing.
+   * @returns {DeconstructedSnowflake}
    */
-  get createdAt(): Date;
+  static deconstruct(snowflake: snowflake, epoch?: number): DeconstructedSnowflake;
 
   /**
-   * The snowflake as binary.
+   * Generates a new snowflake.
+   * @param {Date | number} timestamp The timestamp.
+   * @param {number} epoch The epoch to use for the timestamp.
+   * @returns {string}
    */
-  get binary(): string;
-
-  /**
-   * Resolves a snowflake into an object.
-   * @param id The ID to resolve.
-   */
-  static resolve(id: string | BigInt): DiscordSnowflake;
-
-  /**
-   * Get the snowflake as a string.
-   */
-  toString(): string;
-
-  /**
-   * JSON representation of this snowflake.
-   */
-  toJSON(): DiscordSnowflake;
+  static generate({ epoch, timestamp }?: GenerateSnowflakeOptions): string;
 }
 
-export interface DiscordSnowflake {
-  id: string;
+/**
+ * A Twitter snowflake, except the default epoch is 2015-01-01T00:00:00.000Z
+ *
+ * ```
+ * If we have a snowflake '266241948824764416' we can represent it as binary:
+ *
+ * 64                                          22     17     12          0
+ *  000000111011000111100001101001000101000000  00001  00000  000000000000
+ *           number of ms since epoch           worker  pid    increment
+ * ```
+ */
+export type snowflake = string;
+
+export interface DeconstructedSnowflake {
+  binary: string;
   timestamp: number;
   workerId: number;
   processId: number;
   increment: number;
+}
+
+export interface GenerateSnowflakeOptions {
+  timestamp?: Date | number;
+  epoch?: number;
 }
 
 export class Collection<K, V> extends Map<K, V> {
@@ -370,46 +382,48 @@ export enum Unit {
 export class Duration {
   /**
    * Parses a number into a string.
-   * @param number The number to parse.
-   * @param long Whether or not to return the long version.
-   * @since 1.0.0
+   * @param {number} number The number to parse.
+   * @param {boolean} [long=false] Whether or not to return the long version.
    */
   static parse(number: number, long?: boolean): string;
   /**
    * Parses a string into milliseconds.
    * @param string The string to parse.
-   * @since 1.0.0
    */
   static parse(string: string): number;
 }
 
 export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
   /**
-   * Flags for this BitField (Should be implemented in child classes)
+   * Flags for this BitField (Should be implemented in child classes).
+   * @type {*}
    */
   static FLAGS: any;
   /**
    * The default flags for the bitfield
+   * @type {number}
    */
   static DEFAULT: number;
   /**
    * The bitfield data
+   * @type {number}
    */
   bitmask: number;
 
   /**
-   * @param bits
+   * @param {BitFieldResolvable} bits
    */
   constructor(bits?: T);
 
   /**
    * The value of all bits in this bitfield
+   * @type {number}
    */
   static get ALL(): number;
 
   /**
    * Resolves a BitFieldResolvable into a number
-   * @param bit The bit/s to resolve
+   * @param {BitFieldResolvable} bit The bit/s to resolve
    */
   static resolve<T extends BitFieldResolvable>(bit?: T): number;
 
@@ -427,15 +441,15 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
 
   /**
    * Checks if this BitField has a bit or bits
-   * @param bit The bit/s to check
-   * @param hasParams
+   * @param {BitFieldResolvable} bit The bit/s to check
+   * @param {...*} hasParams
    */
   has(bit: T, ...hasParams: any[]): boolean;
 
   /**
    * Returns any bits this BitField is missing
-   * @param bits The bit/s to check for
-   * @param hasParams Additional params to pass to child has methods
+   * @param {BitFieldResolvable} bits The bit/s to check for
+   * @param {...*} hasParams Additional params to pass to child has methods
    */
   missing(bits: T, ...hasParams: any[]): string[];
 
@@ -452,37 +466,37 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
 
   /**
    * Removes a bit to this BitField or a new Bitfield if this is frozen
-   * @param bits The bit/s to remove
+   * @param {...BitFieldResolvable} bits The bit/s to remove
    */
   remove(...bits: T[]): BitField<T>;
 
   /**
    * Returns only the bits in common between this bitfield and the passed bits.
-   * @param bits The bit/s to mask
+   * @param {...BitFieldResolvable} bits The bit/s to mask
    */
   mask(...bits: T[]): BitField<T>;
 
   /**
    * Returns an object of flags: boolean
-   * @param hasParams Additional params to pass to child has methods
+   * @param {...*} hasParams Additional params to pass to child has methods
    */
   serialize(...hasParams: any[]): Record<string, boolean>;
 
   /**
    * Returns an array of Flags that make up this BitField
-   * @param hasParams Additional params to pass to child has methods
+   * @param {...*} hasParams Additional params to pass to child has methods
    */
   toArray(...hasParams: any[]): string[];
 
   /**
-   * Defines what this Bitfield is when converted to JSON
-   * @since 1.0.0
+   * The JSON representation of this bitfield.
+   * @returns {number}
    */
   toJSON(): number;
 
   /**
    * Defines value behavior of this BitField
-   * @since 1.0.0
+   * @returns {number}
    */
   valueOf(): number;
 }
@@ -499,32 +513,30 @@ export type BitFieldResolvable =
 
 /**
  * A helper function for determining whether something is a class.
- * @param input
- * @since 2.0.0
+ * @param {*} input
+ * @returns {boolean} Whether the input was a class.
  */
 export function isClass(input: unknown): input is Class<unknown>;
 
 /**
  * A helper function for capitalizing the first letter in the sentence.
- * @param str
- * @param lowerRest
- * @since 2.0.0
+ * @param {string} str
+ * @param {boolean} [lowerRest=true]
  */
 export function capitalize(str: string, lowerRest?: boolean): string;
 
 /**
  * A helper function for determining if a value is an event emitter.
- * @param input
- * @since 2.0.0
+ * @param {unknown} input
+ * @returns {boolean} Whether the input was an emitter.
  */
 export function isEmitter(input: unknown): input is EventEmitterLike;
 
 /**
  * Returns an array.
- * @param v
- * @since 2.0.0
+ * @param {*[] | *} value
  */
-export function array<T>(v: T | T[]): T[];
+export function array<T>(value: T | T[]): T[];
 
 /**
  * A helper function for determining if a value is a string.
@@ -548,20 +560,21 @@ export function has<O extends Dictionary, K extends keyof O>(obj: O, key: K): ob
 
 /**
  * Pauses the event loop for a set duration of time.
- * @param ms The duration in milliseconds.
+ * @param {number | string} ms The duration in milliseconds.
+ * @returns {Promise<NodeJS.Timeout>}
  */
-export function sleep(ms: number): Promise<void>;
+export function sleep(ms: number | string): Promise<NodeJS.Timeout>;
 
 /**
  * Walks a directory.
- * @param directory The directory to walk.
- * @param options Options for declaring the depth and extensions.
+ * @param {string} directory The directory to walk.
+ * @param {WalkOptions} options Options for declaring the depth and extensions.
  */
 export function walk(directory: string, options?: WalkOptions): string[];
 
 /**
  * Merges objects into one.
- * @param objects The objects to merge.
+ * @param {Dictionary} objects The objects to merge.
  */
 export function mergeObjects<O extends Dictionary = Dictionary>(...objects: Partial<O>[]): O;
 
@@ -573,15 +586,14 @@ export function isObject(input: unknown): input is Dictionary;
 
 /**
  * Calls Object#defineProperty on a method or property.
- * @param descriptor The descriptor to pass.
+ * @param {PropertyDescriptor} descriptor The descriptor to pass.
  */
 export function define(descriptor: PropertyDescriptor): PropertyDecorator;
 
 /**
  * Flatten an object.
- * @param obj
- * @param props
- * @since 1.0.0
+ * @param {*} obj
+ * @param {...*} [props]
  */
 export function flatten(obj: unknown, ...props: any[]): any;
 
@@ -589,3 +601,4 @@ export interface WalkOptions {
   depth?: number;
   extensions?: string[];
 }
+
