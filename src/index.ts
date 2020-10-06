@@ -5,25 +5,29 @@
  */
 
 import type { EventEmitter } from "events";
-import type { Emitter } from "./classes/Emitter";
+import type { Emitter } from "./utility/Emitter";
 
-export { Timers } from "./classes/Timers";
-export { Extender, Class } from "./classes/Extender";
-export { Bucket } from "./classes/Bucket";
-export { AsyncQueue } from "./classes/AsyncQueue";
-export { Emitter } from "./classes/Emitter";
-export { Snowflake, DeconstructedSnowflake } from "./classes/Snowflake";
-export { Collection } from "./classes/Collection";
-export { Duration, Unit } from "./classes/Duration";
-export {
-  BitField,
-  BitFieldObject,
-  BitFieldResolvable,
-} from "./classes/Bitfield";
-export * from "./functions";
+export * from "./discord/bitfields/Intents";
+export * from "./discord/bitfields/MessageFlags";
+export * from "./discord/bitfields/Permissions";
+export * from "./discord/bitfields/UserFlags";
+export * from "./discord/Bitfield";
+export * from "./discord/Snowflake";
+
+export * from "./store/Collection";
+export * from "./store/List";
+export * from "./store/Pair";
+
+export * from "./utility/AsyncQueue";
+export * from "./utility/Bucket";
+export * from "./utility/Duration";
+export * from "./utility/Emitter";
+export * from "./utility/Extender";
+export * from "./utility/Timers";
+export * from "./utility/Type";
 
 declare global {
   type Dictionary<V = any> = Record<string, V>;
   type EventEmitterLike = Emitter | EventEmitter;
-  type Tuple<L = any, R = any> = [L, R];
+  type Tuple<L = any, R = any> = [ L, R ];
 }
