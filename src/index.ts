@@ -24,6 +24,7 @@ export * from "./utility/Duration";
 export * from "./utility/Emitter";
 export * from "./utility/Extender";
 export * from "./utility/Timers";
+export * from "./utility/functions";
 export * from "./utility/Type";
 
 declare global {
