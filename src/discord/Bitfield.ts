@@ -7,7 +7,7 @@
 export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
   /**
    * Flags for this BitField (Should be implemented in child classes).
-   * @type {*}
+   * @type {any}
    */
   public static FLAGS: any = {} as const;
 
@@ -172,7 +172,7 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
 
   /**
    * Returns an array of Flags that make up this BitField
-   * @param {...*} hasParams Additional params to pass to child has methods
+   * @param {...any} hasParams Additional params to pass to child has methods
    */
   public toArray(...hasParams: any[]): string[] {
     const constructor = this.constructor as typeof BitField;
