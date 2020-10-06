@@ -31,7 +31,7 @@ export abstract class Timers {
    * Set an interval.
    * @param {Fn} fn The function to call.
    * @param {number} delay The delay between each call.
-   * @param {...*} [args] The args to pass.
+   * @param {...any} [args] The args to pass.
    */
   public static setInterval(
     fn: Fn,
@@ -57,7 +57,7 @@ export abstract class Timers {
    * Set an interval.
    * @param {Fn} fn The function to call.
    * @param {number} delay The delay between each call.
-   * @param {...*} args The args to pass.
+   * @param {...any} args The args to pass.
    */
   public static setTimeout(
     fn: Fn,

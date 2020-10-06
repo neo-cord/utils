@@ -4,8 +4,6 @@
  * See the LICENSE file in the project root for more details.
  */
 
-import { define } from "../functions";
-
 export class Emitter {
   /**
    * Event listeners attached to this emitter.
@@ -18,9 +16,9 @@ export class Emitter {
    * Creates a new instanceof Emitter.
    */
   public constructor() {
-    define({
+    Object.defineProperty(this, "_listeners", {
       value: {},
-    })(this, "_listeners");
+    });
   }
 
   /**

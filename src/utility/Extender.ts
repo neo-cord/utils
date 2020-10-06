@@ -4,20 +4,20 @@
  * See the LICENSE file in the project root for more details.
  */
 
-import { isPromise } from "../functions";
+import { isPromise } from "./functions";
 
-export class Extender<S extends Dictionary<Class<any>>> {
+export class Extender<S extends Dictionary<Class>> {
   /**
    * All of the structures that can be extended.
    * @type {Map<string, Class>}
    */
-  public readonly structures: Map<keyof S, Class<any>> = new Map();
+  public readonly structures: Map<keyof S, Class> = new Map();
 
   /**
    * Whether or not this extender is immutable.
    * @type {boolean}
    */
-  public immutable = false;
+  #immutable = false;
 
   /**
    * @param {Dictionary} structures Pre-defined structures.
@@ -35,11 +35,11 @@ export class Extender<S extends Dictionary<Class<any>>> {
    * @param {Dictionary} structures The pre-defined structures.
    * @constructor
    */
-  public static Immutable<S extends Dictionary<Class<any>>>(
+  public static Immutable<S extends Dictionary<Class>>(
     structures: S
   ): Extender<S> {
     const extender = new Extender<S>(structures);
-    extender.immutable = true;
+    extender.#immutable = true;
     return extender;
   }
 
@@ -50,7 +50,7 @@ export class Extender<S extends Dictionary<Class<any>>> {
    */
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public add(name: string, structure: any): this {
-    if (this.immutable) throw new Error("This extender is immutable.");
+    if (this.#immutable) throw new Error("This extender is immutable.");
     if (!this.structures.has(name)) this.structures.set(name, structure);
     return this;
   }
@@ -95,4 +95,4 @@ export class Extender<S extends Dictionary<Class<any>>> {
 }
 
 export type ExtenderFunction<S, E extends S> = (base: S) => E | Promise<E>;
-export type Class<T> = new (...args: any[]) => T;
+export type Class<T = any> = new (...args: any[]) => T;

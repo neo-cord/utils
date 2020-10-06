@@ -6,17 +6,16 @@
 
 import { join } from "path";
 import { lstatSync, readdirSync } from "fs";
-import { Timers } from "./classes/Timers";
-import { Duration } from "./classes/Duration";
+import { Timers } from "./Timers";
 
-import type { Class } from "./classes/Extender";
+import type { Class } from "./Extender";
 
 /**
  * A helper function for determining whether something is a class.
- * @param {*} input
+ * @param {any} input
  * @returns {boolean} Whether the input was a class.
  */
-export function isClass(input: unknown): input is Class<unknown> {
+export function isClass(input: unknown): input is Class {
   return (
     typeof input === "function" &&
     typeof input.prototype === "object" &&
@@ -30,7 +29,7 @@ export function isClass(input: unknown): input is Class<unknown> {
  * @param {boolean} [lowerRest=true]
  */
 export function capitalize(str: string, lowerRest = true): string {
-  const [f, ...r] = str.split("");
+  const [ f, ...r ] = str.split("");
   return `${f.toUpperCase()}${
     lowerRest ? r.join("").toLowerCase() : r.join("")
   }`;
@@ -38,7 +37,7 @@ export function capitalize(str: string, lowerRest = true): string {
 
 /**
  * A helper function for determining if a value is an event emitter.
- * @param {unknown} input
+ * @param {any} input
  * @returns {boolean} Whether the input was an emitter.
  */
 export function isEmitter(input: unknown): input is EventEmitterLike {
@@ -52,10 +51,10 @@ export function isEmitter(input: unknown): input is EventEmitterLike {
 
 /**
  * Returns an array.
- * @param {*[] | *} value
+ * @param {any[] | any} value
  */
 export function array<T>(value: T | T[]): T[] {
-  return Array.isArray(value) ? value : [value];
+  return Array.isArray(value) ? value : [ value ];
 }
 
 /**
@@ -96,10 +95,8 @@ export function has<O extends Dictionary, K extends keyof O>(
  * @param {number | string} ms The duration in milliseconds.
  * @returns {Promise<NodeJS.Timeout>}
  */
-export function sleep(ms: number | string): Promise<NodeJS.Timeout> {
-  const _ms = typeof ms === "string" ? Duration.parse(ms) : ms;
-
-  return new Promise((r) => Timers.setTimeout(r, _ms));
+export function sleep(ms: number): Promise<NodeJS.Timeout> {
+  return new Promise((r) => Timers.setTimeout(r, ms));
 }
 
 /**
@@ -111,7 +108,7 @@ export function walk(directory: string, options: WalkOptions = {}): string[] {
   options = Object.assign(
     {
       depth: null,
-      extensions: [".js", ".ts", ".json"],
+      extensions: [ ".js", ".ts", ".json" ]
     },
     options
   );
@@ -181,8 +178,8 @@ export function define(descriptor: PropertyDescriptor): PropertyDecorator {
 
 /**
  * Flatten an object.
- * @param {*} obj
- * @param {...*} [props]
+ * @param {any} obj
+ * @param {...any} [props]
  */
 export function flatten(obj: unknown, ...props: any[]): any {
   if (!isObject(obj)) return obj;

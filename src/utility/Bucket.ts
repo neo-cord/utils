@@ -167,6 +167,5 @@ interface BucketOptions extends Record<string, any> {
 }
 
 interface BucketLatencyRef {
-  offset?: number;
   latency: number;
 }

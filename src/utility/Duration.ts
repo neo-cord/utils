@@ -2,9 +2,11 @@
  * @file modified version of https://github.com/Naval-Base/ms
  */
 
-import { Collection } from "./Collection";
+import { Collection } from "../store/Collection";
 
 export enum Unit {
+  NANOSECOND = 1 / 1e6,
+  MILLISECOND = 1,
   SECOND = 1000,
   MINUTE = SECOND * 60,
   HOUR = MINUTE * 60,
@@ -19,11 +21,13 @@ const regex = /^(-?(?:\d+)?\.?\d+)\s*([a-z]+)?$/;
 export class Duration {
   private static conversions = new Collection<string[], number>([
     [["years", "year", "yrs", "yr", "y"], Unit.YEAR],
-    [["weeks", "week", "w"], Unit.WEEK],
+    [["weeks", "week", "wks", "wk", "w"], Unit.WEEK],
     [["days", "day", "d"], Unit.DAY],
     [["hours", "hour", "hrs", "hr", "h"], Unit.HOUR],
     [["minutes", "minute", "mins", "min", "m"], Unit.MINUTE],
     [["seconds", "second", "secs", "sec", "s"], Unit.SECOND],
+    [["milliseconds", "millisecond", "ms"], Unit.MILLISECOND],
+    [["nanoseconds", "nanosecond", "ns"], Unit.NANOSECOND],
   ]);
 
   /**
@@ -71,7 +75,14 @@ export class Duration {
         return Duration._pluralize(value, Unit.MINUTE, ["m", "minute"], long);
       if (abs >= Unit.SECOND)
         return Duration._pluralize(value, Unit.SECOND, ["s", "second"], long);
-      return `${value}${long ? " milliseconds" : "ms"}`;
+      if (abs >= Unit.MILLISECOND)
+        return Duration._pluralize(
+          value,
+          Unit.MILLISECOND,
+          ["ms", "millisecond"],
+          long
+        );
+      return `${value}${long ? " nanoseconds" : "ns"}`;
     }
 
     throw new Error("Value is an empty string or an invalid number");
