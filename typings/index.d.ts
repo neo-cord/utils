@@ -895,6 +895,97 @@ export abstract class Timers {
 type Fn = (...args: any[]) => any;
 
 /**
+ * A helper function for determining whether something is a class.
+ * @param {any} input
+ * @returns {boolean} Whether the input was a class.
+ */
+export function isClass(input: unknown): input is Class;
+
+/**
+ * A helper function for capitalizing the first letter in the sentence.
+ * @param {string} str
+ * @param {boolean} [lowerRest=true]
+ */
+export function capitalize(str: string, lowerRest?: boolean): string;
+
+/**
+ * A helper function for determining if a value is an event emitter.
+ * @param {any} input
+ * @returns {boolean} Whether the input was an emitter.
+ */
+export function isEmitter(input: unknown): input is EventEmitterLike;
+
+/**
+ * Returns an array.
+ * @param {any[] | any} value
+ */
+export function array<T>(value: T | T[]): T[];
+
+/**
+ * A helper function for determining if a value is a string.
+ * @param value
+ * @since 2.0.0
+ */
+export function isString(value: unknown): value is string;
+
+/**
+ * A helper function for determining whether or not a value is a promise,
+ * @param value
+ */
+export function isPromise(value: unknown): value is Promise<unknown>;
+
+/**
+ * Check whether or not an object has a value.
+ * @param obj The object.
+ * @param key The key.
+ */
+export function has<O extends Dictionary, K extends keyof O>(obj: O, key: K): obj is O & Required<Pick<O, K>>;
+
+/**
+ * Pauses the event loop for a set duration of time.
+ * @param {number | string} ms The duration in milliseconds.
+ * @returns {Promise<NodeJS.Timeout>}
+ */
+export function sleep(ms: number): Promise<NodeJS.Timeout>;
+
+/**
+ * Walks a directory.
+ * @param {string} directory The directory to walk.
+ * @param {WalkOptions} options Options for declaring the depth and extensions.
+ */
+export function walk(directory: string, options?: WalkOptions): string[];
+
+/**
+ * Merges objects into one.
+ * @param {Dictionary} objects The objects to merge.
+ */
+export function mergeObjects<O extends Dictionary = Dictionary>(...objects: Partial<O>[]): O;
+
+/**
+ * Determines whether a value in an object.
+ * @param input
+ */
+export function isObject(input: unknown): input is Dictionary;
+
+/**
+ * Calls Object#defineProperty on a method or property.
+ * @param {PropertyDescriptor} descriptor The descriptor to pass.
+ */
+export function define(descriptor: PropertyDescriptor): PropertyDecorator;
+
+/**
+ * Flatten an object.
+ * @param {any} obj
+ * @param {...any} [props]
+ */
+export function flatten(obj: unknown, ...props: any[]): any;
+
+export interface WalkOptions {
+  depth?: number;
+  extensions?: string[];
+}
+
+/**
  * @file Originally made by the dirigeants team.
  */
 export class Type {
