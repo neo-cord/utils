@@ -7,6 +7,10 @@
 const EPOCH = 1420070400000;
 let INCREMENT = 0;
 
+/**
+ * Some methods taken from discord.js
+ */
+
 export abstract class Snowflake {
   /**
    * Transforms an ID into binary.
@@ -98,6 +102,7 @@ export abstract class Snowflake {
       .padStart(42, "0")}0000100000${(++INCREMENT)
       .toString(2)
       .padStart(12, "0")}`;
+
     return Snowflake.fromBinary(binary);
   }
 }
