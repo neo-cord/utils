@@ -207,7 +207,7 @@ export function define(descriptor: PropertyDescriptor): PropertyDecorator {
 export function flatten(
   obj: any,
   ...props: PropertyKey[]
-): Record<PropertyKey, unknown> {
+): Record<PropertyKey, any> {
   if (!isObject(obj)) return obj;
 
   const out: Dictionary = {};
