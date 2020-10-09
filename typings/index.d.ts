@@ -1179,9 +1179,9 @@ export function walk(directory: string, options?: WalkOptions): string[];
  *
  * @param {Dictionary} objects The objects to merge.
  */
-export function mergeObjects<O extends Dictionary = Dictionary>(
-  ...objects: Partial<O>[]
-): O;
+export function mergeObjects<
+  O extends Record<PropertyKey, any> = Record<PropertyKey, any>
+>(...objects: Partial<O>[]): O;
 
 /**
  * Determines whether a value in an object.
@@ -1204,8 +1204,8 @@ export function define(descriptor: PropertyDescriptor): PropertyDecorator;
  * @returns {Record<PropertyKey, any>}
  */
 export function flatten(
-  obj: Record<PropertyKey, unknown>,
-  ...props: any[]
+  obj: any,
+  ...props: PropertyKey[]
 ): Record<PropertyKey, unknown>;
 
 export interface WalkOptions {
