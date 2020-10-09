@@ -4,11 +4,14 @@
  * See the LICENSE file in the project root for more details.
  */
 
+import { Type } from "..";
+
 export class List<V> extends Set<V> {
   public ["constructor"]: typeof List;
 
   /**
    * The first item in this list.
+   *
    * @type {?any}
    */
   public get first(): V | null {
@@ -17,6 +20,7 @@ export class List<V> extends Set<V> {
 
   /**
    * The last item in this list.
+   *
    * @type {?any}
    */
   public get last(): V | null {
@@ -25,6 +29,7 @@ export class List<V> extends Set<V> {
 
   /**
    * The array representation of this list.
+   *
    * @returns {Array}
    */
   public array(): V[] {
@@ -33,8 +38,10 @@ export class List<V> extends Set<V> {
 
   /**
    * Maps each element in this list.
+   *
    * @param {Map} callbackFn The callback function.
    * @param {any} [thisArg] Optional binding for the callback.
+   * @returns {any[]}
    */
   public map<U>(callbackFn: Map<V, U>, thisArg?: unknown): U[] {
     return this.array().map((v, i) => callbackFn(v, i, this), thisArg);
@@ -42,6 +49,7 @@ export class List<V> extends Set<V> {
 
   /**
    * Check whether a value exists in this list.
+   *
    * @param {Predicate} predicate The predicate.
    * @param {any} [thisArg] Optional binding for the predicate.
    * @returns {boolean} true if the predicate returns true
@@ -60,6 +68,7 @@ export class List<V> extends Set<V> {
 
   /**
    * Filters items that pass the predicate into a new list.
+   *
    * @param {Filter} predicate The filter predicate.
    * @param {any} [thisArg] Optional binding for the predicate.
    */
@@ -74,6 +83,7 @@ export class List<V> extends Set<V> {
 
   /**
    * Finds a value in this list using the predicate.
+   *
    * @param {Predicate} predicate The predicate.
    * @param {any} [thisArg] Optional binding for the predicate.
    */
@@ -83,6 +93,7 @@ export class List<V> extends Set<V> {
 
   /**
    * Determines whether the specified callback function returns true for any element of an array.
+   *
    * @param {Predicate} predicate The predicate.
    * @param {any} [thisArg] Optional binding for the predicate.
    */
@@ -92,9 +103,11 @@ export class List<V> extends Set<V> {
 
   /**
    * Reduces this list into a single value.
+   *
    * @param {Reducer} reducer The reducer function.
    * @param {any} acc The accumulator.
    * @param {any} [thisArg] Optional binding for the reducer function.
+   * @returns {any}
    */
   public reduce<A>(reducer: Reducer<A, V>, acc: A, thisArg?: unknown): A {
     if (thisArg) reducer = reducer.bind(thisArg);
@@ -111,10 +124,25 @@ export class List<V> extends Set<V> {
 
   /**
    * Clones this list.
+   *
    * @returns {List}
    */
   public clone(): List<V> {
     return new this.constructor<V>([...this]);
+  }
+
+  /**
+   * Get the string representation of this collection.
+   *
+   * @returns {string}
+   */
+  public toString(): string {
+    if (this.size) {
+      const v = this.first;
+      return `${this.constructor.name}<${new Type(v)}>`;
+    }
+
+    return "${this.constructor.name}<any>";
   }
 }
 

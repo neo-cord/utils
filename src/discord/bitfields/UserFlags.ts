@@ -24,9 +24,5 @@ export enum UserFlag {
 
 export class UserFlags extends BitField<UserFlagResolvable> {}
 
-export type UserFlagResolvable =
-  | UserFlag
-  | keyof typeof UserFlag
-  | number
-  | BitFieldObject
-  | (keyof typeof UserFlag | number | BitFieldObject)[];
+type UserFlagBit = UserFlag | keyof typeof UserFlag | number | BitFieldObject;
+export type UserFlagResolvable = UserFlagBit | UserFlagBit[];

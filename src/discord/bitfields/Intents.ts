@@ -27,20 +27,29 @@ export enum Intent {
 export class Intents extends BitField<IntentResolvable> {
   /**
    * All intents that were provided by discord.
+   *
+   * @type {Intent}
    */
   public static FLAGS = Intent;
+
   /**
    * All privileged intents ORed together.
+   *
+   * @type {number}
    */
   public static PRIVILEGED = Intent.GuildMembers | Intent.GuildPresences;
 
   /**
    * All of the non-privileged intents.
+   *
+   * @type {number}
    */
   public static NON_PRIVILEGED = Intents.ALL & ~Intents.PRIVILEGED;
 
   /**
-   * Recommended defaults by NeoCord.
+   * Intents recommended by NeoCord.
+   *
+   * @type {number}
    */
   public static DEFAULT =
     Intent.Guilds |
@@ -52,9 +61,5 @@ export class Intents extends BitField<IntentResolvable> {
     Intent.DirectMessages;
 }
 
-export type IntentResolvable =
-  | Intent
-  | keyof typeof Intent
-  | number
-  | BitFieldObject
-  | (keyof typeof Intent | number | BitFieldObject)[];
+type IntentBit = Intent | keyof typeof Intent | number | BitFieldObject;
+export type IntentResolvable = IntentBit | IntentBit[];

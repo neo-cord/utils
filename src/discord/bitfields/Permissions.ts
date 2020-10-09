@@ -43,25 +43,30 @@ export enum Permission {
 export class Permissions extends BitField<PermissionResolvable> {
   /**
    * All Permission Flags.
+   *
    * @type {Permission}
    */
   public static FLAGS = Permission;
 
   /**
    * The default permissions for a role.
+   *
    * @type {number}
    */
   public static DEFAULT = 104320577;
 
   /**
    * Permissions that can't be influenced by channel overwrites, even if explicitly set.
+   *
    * @type {number}
    */
   public static GUILD_SCOPE_PERMISSIONS = 1275592878;
 
   /**
    * Makes a permission name more readable.
-   * @param {Permission} permission The permission
+   *
+   * @param {Permission} permission The permission.
+   * @returns {boolean}
    */
   public static humanize(permission: Permission): string {
     if (permission === Permission.UseVAD) return "Use Voice Activity";
@@ -71,8 +76,10 @@ export class Permissions extends BitField<PermissionResolvable> {
 
   /**
    * Checks whether the bitfield has a permission, or any of multiple permissions.
-   * @param {PermissionResolvable} permission Permission(s) to check for
-   * @param {boolean} [checkAdmin] Whether to allow the administrator permission to override
+   *
+   * @param {PermissionResolvable} permission Permission(s) to check for.
+   * @param {boolean} [checkAdmin] Whether to allow the administrator permission to override.
+   * @returns {boolean}
    */
   public any(permission: PermissionResolvable, checkAdmin = true): boolean {
     return (
@@ -83,8 +90,10 @@ export class Permissions extends BitField<PermissionResolvable> {
 
   /**
    * Checks whether the bitfield has a permission, or multiple permissions.
-   * @param {PermissionResolvable} permission Permission(s) to check for
-   * @param {boolean} [checkAdmin] Whether to allow the administrator permission to override
+   *
+   * @param {PermissionResolvable} permission Permission(s) to check for.
+   * @param {boolean} [checkAdmin] Whether to allow the administrator permission to override.
+   * @returns {number}
    */
   public has(permission: PermissionResolvable, checkAdmin = true): boolean {
     return (
@@ -94,9 +103,9 @@ export class Permissions extends BitField<PermissionResolvable> {
   }
 }
 
-export type PermissionResolvable =
+type PermissionBit =
   | Permission
   | keyof typeof Permission
   | number
-  | BitFieldObject
-  | (keyof typeof Permission | number | BitFieldObject)[];
+  | BitFieldObject;
+export type PermissionResolvable = PermissionBit | PermissionBit[];

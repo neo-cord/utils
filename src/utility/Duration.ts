@@ -32,20 +32,27 @@ export class Duration {
 
   /**
    * Parses a number into a string.
+   *
    * @param {number} number The number to parse.
    * @param {boolean} [long=false] Whether or not to return the long version.
+   * @returns {string}
    */
   public static parse(number: number, long?: boolean): string;
+
   /**
    * Parses a string into milliseconds.
-   * @param string The string to parse.
+   *
+   * @param {string} string The string to parse.
+   * @returns {number}
    */
   public static parse(string: string): number;
 
   /**
    * Parses a string or number into a string or milliseconds.
+   *
    * @param {number | string} value The string or number to parse.
    * @param {boolean} [long=false] Whether to format the number longer.
+   * @returns {number | string}
    */
   public static parse(value: string | number, long = false): number | string {
     let abs,
@@ -57,7 +64,7 @@ export class Duration {
           const fmt = regex.exec(unit);
           if (fmt) {
             abs = parseFloat(fmt[1]);
-            ms += this._convert(abs, fmt[2]);
+            ms += this.__convert(abs, fmt[2]);
           }
         }
 
@@ -68,15 +75,15 @@ export class Duration {
     if (typeof value === "number" && isFinite(value)) {
       abs = Math.abs(value);
       if (abs >= Unit.DAY)
-        return Duration._pluralize(value, Unit.DAY, ["d", "day"], long);
+        return Duration.__pluralize(value, Unit.DAY, ["d", "day"], long);
       if (abs >= Unit.HOUR)
-        return Duration._pluralize(value, Unit.HOUR, ["h", "hour"], long);
+        return Duration.__pluralize(value, Unit.HOUR, ["h", "hour"], long);
       if (abs >= Unit.MINUTE)
-        return Duration._pluralize(value, Unit.MINUTE, ["m", "minute"], long);
+        return Duration.__pluralize(value, Unit.MINUTE, ["m", "minute"], long);
       if (abs >= Unit.SECOND)
-        return Duration._pluralize(value, Unit.SECOND, ["s", "second"], long);
+        return Duration.__pluralize(value, Unit.SECOND, ["s", "second"], long);
       if (abs >= Unit.MILLISECOND)
-        return Duration._pluralize(
+        return Duration.__pluralize(
           value,
           Unit.MILLISECOND,
           ["ms", "millisecond"],
@@ -90,7 +97,8 @@ export class Duration {
 
   /**
    * Tokenizes an input string.
-   * @param {string} str
+   *
+   * @param {string} str The string to tokenize/
    * @private
    */
   private static _tokenize(str: string): string[] {
@@ -122,26 +130,37 @@ export class Duration {
   }
 
   /**
+   * Converts a number.
+   *
+   * @param {number} num The number to convert.
+   * @param {string} unit The unit to convert the num to.
    * @private
    */
-  private static _convert(num: number, unit: string): number {
+  private static __convert(num: number, unit: string): number {
     return (
       (Duration.conversions.find((_v, k) => k.includes(unit)) as number) * num
     );
   }
 
   /**
+   * Pluralize a type.
+   *
+   * @param {number} ms The milliseconds.
+   * @param {number} base The base.
+   * @param {Tuple} types The types.
+   * @param {boolean} long Whether to make the output long.
+   * @returns {string}
    * @private
    */
-  private static _pluralize(
+  private static __pluralize(
     ms: number,
     base: number,
     types: Tuple<string, string>,
     long = false
   ): string {
-    const plural = Math.abs(ms) >= base * 1.5;
-    return `${Math.round(ms / base)}${
-      long ? ` ${types[1]}${plural ? "s" : ""}` : types[0]
-    }`;
+    const plural = Math.abs(ms) >= base * 1.5,
+      longStr = long ? ` ${types[1]}${plural ? "s" : ""}` : types[0];
+
+    return `${Math.round(ms / base)}${longStr}`;
   }
 }

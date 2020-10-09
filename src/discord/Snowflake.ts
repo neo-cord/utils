@@ -8,12 +8,13 @@ const EPOCH = 1420070400000;
 let INCREMENT = 0;
 
 /**
- * Some methods taken from discord.js
+ * @credit Some methods taken from discord.js
  */
 
 export abstract class Snowflake {
   /**
    * Transforms an ID into binary.
+   *
    * @param {string} snowflake The ID to transform.
    * @returns {string}
    */
@@ -36,6 +37,7 @@ export abstract class Snowflake {
 
   /**
    * Transforms an ID from binary to a decimal string.
+   *
    * @param {string} binary The binary string to be transformed.
    * @returns {string}
    */
@@ -65,6 +67,7 @@ export abstract class Snowflake {
 
   /**
    * Deconstructs a Discord Snowflake.
+   *
    * @param {snowflake} snowflake
    * @param {number} epoch The epoch to use when deconstructing.
    * @returns {DeconstructedSnowflake}
@@ -86,14 +89,15 @@ export abstract class Snowflake {
 
   /**
    * Generates a new snowflake.
-   * @param {Date | number} timestamp The timestamp.
-   * @param {number} epoch The epoch to use for the timestamp.
+   *
+   * @param {GenerateSnowflakeOptions} options The options to use when generating a snowflake.
    * @returns {string}
    */
   public static generate({
     epoch = EPOCH,
     timestamp = Date.now(),
   }: GenerateSnowflakeOptions = {}): string {
+    if (epoch instanceof Date) epoch = epoch.getTime();
     if (timestamp instanceof Date) timestamp = timestamp.getTime();
     if (INCREMENT >= 4095) INCREMENT = 0;
 
@@ -129,6 +133,19 @@ export interface DeconstructedSnowflake {
 }
 
 export interface GenerateSnowflakeOptions {
+  /**
+   * The timestamp to use.
+   *
+   * @type {?Date | null}
+   * @default Date.now()
+   */
   timestamp?: Date | number;
-  epoch?: number;
+
+  /**
+   * The EPOCH to use.
+   *
+   * @type {?number}
+   * @default Discords Epoch
+   */
+  epoch?: number | Date;
 }

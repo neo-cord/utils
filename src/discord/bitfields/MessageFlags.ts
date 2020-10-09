@@ -29,15 +29,17 @@ export enum MessageFlag {
 
   /**
    * This message came from the urgent message system.
+   *
+   * @type {number}
    */
   Urgent = 1 << 4,
 }
 
 export class MessageFlags extends BitField<MessageFlagResolvable> {}
 
-export type MessageFlagResolvable =
+type MessageFlagBit =
   | MessageFlag
-  | keyof MessageFlag
+  | keyof typeof MessageFlag
   | number
-  | BitFieldObject
-  | (keyof typeof MessageFlag | number | BitFieldObject)[];
+  | BitFieldObject;
+export type MessageFlagResolvable = MessageFlagBit | MessageFlagBit[];

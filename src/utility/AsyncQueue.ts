@@ -7,6 +7,7 @@
 export class AsyncQueue {
   /**
    * The promises in this queue.
+   *
    * @type {DeferredPromise[]}
    * @private
    */
@@ -14,6 +15,7 @@ export class AsyncQueue {
 
   /**
    * The remaining promises that are in the queue.
+   *
    * @type {number}
    */
   public get remaining(): number {
@@ -22,6 +24,7 @@ export class AsyncQueue {
 
   /**
    * Waits for the last promise to resolve and queues a new one.
+   *
    * @returns {Promise<void>}
    */
   public wait(): Promise<void> {
@@ -35,6 +38,7 @@ export class AsyncQueue {
 
   /**
    * Enqueues a new promise.
+   *
    * @returns {Promise<void>}
    */
   public enqueue(): void {
@@ -48,6 +52,7 @@ export class AsyncQueue {
 
   /**
    * Frees the queue's lock so the next promise can resolve.
+   *
    * @returns {void}
    */
   public next(): void {

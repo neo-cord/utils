@@ -9,13 +9,16 @@ import { isPromise } from "./functions";
 export class Extender<S extends Dictionary<Class>> {
   /**
    * All of the structures that can be extended.
+   *
    * @type {Map<string, Class>}
    */
   public readonly structures: Map<keyof S, Class> = new Map();
 
   /**
    * Whether or not this extender is immutable.
+   *
    * @type {boolean}
+   * @private
    */
   #immutable = false;
 
@@ -32,7 +35,9 @@ export class Extender<S extends Dictionary<Class>> {
 
   /**
    * Creates a new immutable extender.
+   *
    * @param {Dictionary} structures The pre-defined structures.
+   * @returns {Extender}
    * @constructor
    */
   public static Immutable<S extends Dictionary<Class>>(
@@ -45,8 +50,10 @@ export class Extender<S extends Dictionary<Class>> {
 
   /**
    * Adds a new structure to this extender.
+   *
    * @param {string} name The name of this extender.
-   * @param {*} structure
+   * @param {any} structure The structure to add.
+   * @returns {Extender}
    */
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public add(name: string, structure: any): this {
@@ -56,8 +63,10 @@ export class Extender<S extends Dictionary<Class>> {
   }
 
   /**
-   * Get a structure.
-   * @param name The structures name.
+   * Get a structure from this extender.
+   *
+   * @param {string} name The structures name.
+   * @returns {Class}
    */
   public get<K extends keyof S>(name: K): S[K] {
     if (!this.structures.has(name))
@@ -68,8 +77,10 @@ export class Extender<S extends Dictionary<Class>> {
 
   /**
    * Extend a defined structures.
+   *
    * @param {string} name The structure to extend.
    * @param {ExtenderFunction} extender The extender function.
+   * @returns {Promise<Extender>}
    */
   public async extend<K extends keyof S, E extends S[K]>(
     name: K,
@@ -94,5 +105,5 @@ export class Extender<S extends Dictionary<Class>> {
   }
 }
 
-export type ExtenderFunction<S, E extends S> = (base: S) => E | Promise<E>;
+export type ExtenderFunction<S, E> = (base: S) => E | Promise<E>;
 export type Class<T = any> = new (...args: any[]) => T;

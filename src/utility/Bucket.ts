@@ -9,54 +9,63 @@ import { Timers } from "./Timers";
 export class Bucket {
   /**
    * How many tokens the bucket has consumed in this interval.
+   *
    * @type {number}
    */
   public tokens: number;
 
   /**
    * Timestamp of last token cleaning.
+   *
    * @type {number}
    */
   public lastReset: number;
 
   /**
    * Timestamp of last token consumption.
+   *
    * @type {number}
    */
   public lastSend: number;
 
   /**
    * The max number tokens the bucket can consume per interval.
+   *
    * @type {number}
    */
   public tokenLimit: number;
 
   /**
-   * How long (in ms) to wait between clearing used tokens.`
+   * How long (in ms) to wait between clearing used tokens.
+   *
    * @type {number}
    */
   public interval: number;
 
   /**
    * A latency reference object.
+   *
    * @type {BucketLatencyRef}
    */
   public latencyRef: BucketLatencyRef;
 
   /**
    * The number of reserved tokens.
+   *
    * @type {number}
    */
   public reservedTokens: number;
 
   /**
    * A rate-limit timeout.
+   *
    * @type {NodeJS.Timeout}
    */
   private timeout?: NodeJS.Timeout;
 
   /**
    * The queue.
+   *
    * @type {Queued[]}
    */
   private readonly _queue: Queued[];
@@ -82,6 +91,7 @@ export class Bucket {
 
   /**
    * Queue something in the Bucket
+   *
    * @param {CallableFunction} func A callback to call when a token can be consumed
    * @param {boolean} [priority=false] Whether or not the callback should use reserved tokens
    */
@@ -145,12 +155,12 @@ export class Bucket {
         this.tokens < this.tokenLimit
           ? this.latencyRef.latency
           : Math.max(
-            0,
-            this.lastReset +
+              0,
+              this.lastReset +
                 this.interval +
                 this.tokenLimit * this.latencyRef.latency -
                 Date.now()
-          )
+            )
       );
     }
   }

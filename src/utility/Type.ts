@@ -8,24 +8,28 @@ const { getPromiseDetails } = process.binding("util");
 export class Type {
   /**
    * The value to generate a deep type of.
+   *
    * @type {any}
    */
   public value: unknown;
 
   /**
    * The shallow type of the value.
+   *
    * @type {string}
    */
   public is: string;
 
   /**
    * The parent of this type.
+   *
    * @type {?Type | null}
    */
   #parent: Type | null | undefined;
 
   /**
    * The child keys of this type.
+   *
    * @type {Map<string, Type>}
    * @private
    */
@@ -33,6 +37,7 @@ export class Type {
 
   /**
    * The child values of this type.
+   *
    * @type {Map<string, Type>}
    * @private
    */
@@ -52,6 +57,7 @@ export class Type {
 
   /**
    * The type of string for the children of this Type.
+   *
    * @type {string}
    */
   private get childTypes(): string {
@@ -67,6 +73,7 @@ export class Type {
 
   /**
    * Resolves the type name that defines the input.
+   *
    * @param {any} value The value to get the type name of.
    * @returns {string}
    */
@@ -88,6 +95,7 @@ export class Type {
 
   /**
    * Joins the list of child types.
+   *
    * @param {Map<string, Type>} values The values to list.
    * @returns {string}
    */
@@ -95,6 +103,11 @@ export class Type {
     return values.has("any") ? "any" : [...values.values()].sort().join(" | ");
   }
 
+  /**
+   * Get the string representation of this Type.
+   *
+   * @returns {string}
+   */
   public toString(): string {
     this.check();
     return `${this.is}${this.childTypes}`;
@@ -102,7 +115,8 @@ export class Type {
 
   /**
    * Checks if the value of this Type is a circular reference to any parent.
-   * @returns {boolean}
+   *
+   * @returns {boolean} Whether this type is a circular reference to any parent.
    * @private
    */
   private isCircular(): boolean {
@@ -115,6 +129,7 @@ export class Type {
 
   /**
    * The subtype to create based on this.value's sub value.
+   *
    * @param {any} value The value to add.
    * @private
    */
@@ -125,9 +140,10 @@ export class Type {
 
   /**
    * The subtype to create based on this.value's entries.
+   *
    * @param {[any, any]} entry The entry to add.
    */
-  private addEntry([key, value]: [any, any]) {
+  private addEntry([key, value]: [any, any]): void {
     const child = new Type(key, this);
     this.#childKeys.set(child.is, child);
     this.addValue(value);
@@ -135,6 +151,7 @@ export class Type {
 
   /**
    * Get the type name that defines the value.
+   *
    * @returns {?string}
    * @private
    */
@@ -159,6 +176,7 @@ export class Type {
 
   /**
    * Walks the types backwards, for checking circulars.
+   *
    * @returns {IterableIterator}
    * @private
    */

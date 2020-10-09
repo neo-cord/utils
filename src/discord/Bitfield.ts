@@ -4,57 +4,73 @@
  * See the LICENSE file in the project root for more details.
  */
 
-export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
+export class BitField<B extends BitResolvable> implements BitFieldObject {
   /**
    * Flags for this BitField (Should be implemented in child classes).
+   *
    * @type {any}
    */
   public static FLAGS: any = {} as const;
 
   /**
    * The default flags for the bitfield
+   *
    * @type {number}
    */
   public static DEFAULT = 0;
 
   /**
    * The bitfield data
+   *
    * @type {number}
    */
   public bitmask: number;
 
   /**
-   * @param {BitFieldResolvable} bits
+   * @param {BitResolvable} bits The bits to start to with.
    */
-  public constructor(bits?: T) {
+  public constructor(bits?: B) {
     const constructor = this.constructor as typeof BitField;
-    this.bitmask = constructor.resolve<T>(bits);
+    this.bitmask = constructor.resolve<B>(bits);
   }
 
   /**
-   * The value of all bits in this bitfield
+   * The value of all bits in this bitfield.
+   *
    * @type {number}
    */
   public static get ALL(): number {
-    return Object.values<number>(this.FLAGS).reduce(
-      (all, byte) => all | byte,
-      0
-    );
+    return Object.values<number>(this.FLAGS).reduce((t, b) => t | b, 0);
   }
 
   /**
-   * Resolves a BitFieldResolvable into a number
-   * @param {BitFieldResolvable} bit The bit/s to resolve
+   * Resolves a BitFieldResolvable into a number.
+   *
+   * @param {BitResolvable} bit The bit/s to resolve.
+   * @returns {number}
    */
-  public static resolve<T extends BitFieldResolvable>(bit?: T): number {
-    if (typeof bit === "undefined") return 0;
-    if (typeof bit === "number" && bit >= 0) return bit;
-    if (bit instanceof BitField) return bit.bitmask;
-    if (Array.isArray(bit))
+  public static resolve<T extends BitResolvable>(bit?: T): number {
+    if (typeof bit === "undefined") {
+      return 0;
+    }
+
+    if (typeof bit === "number" && bit >= 0) {
+      return bit;
+    }
+
+    if (bit instanceof BitField) {
+      return bit.bitmask;
+    }
+
+    if (Array.isArray(bit)) {
       return (bit as (string | number | BitFieldObject)[])
-        .map((byte) => this.resolve(byte))
-        .reduce((bytes, byte) => bytes | byte, 0);
-    if (typeof bit === "string") return this.FLAGS[bit];
+        .map((b) => this.resolve(b))
+        .reduce((t, b) => t | b, 0);
+    }
+
+    if (typeof bit === "string") {
+      return this.FLAGS[bit];
+    }
 
     throw new RangeError(
       `An invalid bit was provided. Received: ${typeof bit}`
@@ -63,43 +79,53 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
 
   /**
    * Checks whether the bitfield has a bit, or any of multiple bits.
-   * @param bit Bit(s) to check for
+   *
+   * @param {number} bit Bit(s) to check for.
+   * @returns {boolean}
    */
-  public any(bit: T): boolean {
+  public any(bit: B): boolean {
     return (this.bitmask & BitField.resolve(bit)) !== 0;
   }
 
   /**
    * Checks if this BitField matches another bitfield resolvable
-   * @param bit The bit/s to check
+   *
+   * @param {BitResolvable} bit The bit(s) to check.
+   * @returns {boolean}
    */
-  public equals(bit: T): boolean {
+  public equals(bit: B): boolean {
     const constructor = this.constructor as typeof BitField;
     return this.bitmask === constructor.resolve(bit);
   }
 
   /**
    * Checks if this BitField has a bit or bits
-   * @param {BitFieldResolvable} bit The bit/s to check
-   * @param {...*} hasParams
+   *
+   * @param {BitResolvable} bit The bit/s to check
+   * @param {...any} args Arguments to pass when provided an array.
+   * @returns {boolean}
    */
-  public has(bit: T, ...hasParams: any[]): boolean {
-    const constructor = this.constructor as typeof BitField;
-    if (Array.isArray(bit))
-      return (bit as T[]).every((byte) => this.has(byte, ...hasParams));
-    const bits = constructor.resolve<T>(bit);
+  public has(bit: B, ...args: any[]): boolean {
+    if (Array.isArray(bit)) {
+      const bitArr = bit as B[];
+      return bitArr.every((byte) => this.has(byte, ...args));
+    }
+
+    const bits = (this.constructor as typeof BitField).resolve<B>(bit);
     return (this.bitmask & bits) === bits;
   }
 
   /**
-   * Returns any bits this BitField is missing
-   * @param {BitFieldResolvable} bits The bit/s to check for
-   * @param {...*} hasParams Additional params to pass to child has methods
+   * Returns any bits this BitField is missing.
+   *
+   * @param {BitResolvable} bits The bit/s to check for.
+   * @param {...any} args Additional params to pass to child has methods.
+   * @returns {string[]}
    */
-  public missing(bits: T, ...hasParams: any[]): string[] {
+  public missing(bits: B, ...args: any[]): string[] {
     const constructor = this.constructor as typeof BitField;
     const strings = new constructor(bits).toArray(false);
-    return strings.filter((byte) => !this.has(byte as T, ...hasParams));
+    return strings.filter((byte) => !this.has(byte as B, ...args));
   }
 
   /**
@@ -111,15 +137,17 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
 
   /**
    * Adds a bit to this BitField or a new Bitfield if this is frozen
-   * @param bits The bit/s to add
+   *
+   * @param {...BitResolvable} bits The bit(s) to add.
+   * @returns {BitField}
    */
-  public add(...bits: T[]): BitField<T> {
-    const constructor = this.constructor as typeof BitField;
-    let total = 0;
+  public add(...bits: B[]): BitField<B> {
+    const constructor = this.constructor as typeof BitField,
+      total = bits.reduce((t, b) => t | constructor.resolve<B>(b), 0);
 
-    for (const bit of bits) total |= constructor.resolve<T>(bit);
-    if (Object.isFrozen(this))
-      return new constructor<T>((this.bitmask | total) as T);
+    if (Object.isFrozen(this)) {
+      return new constructor<B>((this.bitmask | total) as B);
+    }
 
     this.bitmask |= total;
     return this;
@@ -127,15 +155,17 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
 
   /**
    * Removes a bit to this BitField or a new Bitfield if this is frozen
-   * @param {...BitFieldResolvable} bits The bit/s to remove
+   *
+   * @param {...BitResolvable} bits The bit(s) to remove.
+   * @returns {BitField}
    */
-  public remove(...bits: T[]): BitField<T> {
-    const constructor = this.constructor as typeof BitField;
-    let total = 0;
+  public remove(...bits: B[]): this {
+    const constructor = this.constructor as typeof BitField,
+      total = bits.reduce((t, b) => t | constructor.resolve<B>(b), 0);
 
-    for (const bit of bits) total |= constructor.resolve<T>(bit);
-    if (Object.isFrozen(this))
-      return new constructor<T>((this.bitmask & ~total) as T);
+    if (Object.isFrozen(this)) {
+      return new constructor<B>((this.bitmask & ~total) as B) as this;
+    }
 
     this.bitmask &= ~total;
     return this;
@@ -143,46 +173,56 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
 
   /**
    * Returns only the bits in common between this bitfield and the passed bits.
-   * @param {...BitFieldResolvable} bits The bit/s to mask
+   *
+   * @param {...BitResolvable} bits The bit(s) to mask.
+   * @returns {BitField}
    */
-  public mask(...bits: T[]): BitField<T> {
-    const total = bits.reduce(
-      (acc, bit) => acc | (this.constructor as typeof BitField).resolve<T>(bit),
-      0
-    );
-    if (Object.isFrozen(this))
-      return new (this.constructor as typeof BitField)<T>(
-        (this.bitmask & total) as T
-      );
+  public mask(...bits: B[]): this {
+    const constructor = this.constructor as typeof BitField,
+      total = bits.reduce((acc, bit) => acc | constructor.resolve<B>(bit), 0);
+
+    if (Object.isFrozen(this)) {
+      return new constructor<B>((this.bitmask & total) as B) as this;
+    }
+
     this.bitmask &= total;
     return this;
   }
 
   /**
-   * Returns an object of flags: boolean
-   * @param {...*} hasParams Additional params to pass to child has methods
+   * Returns an object of flags: boolean.
+   *
+   * @param {...*} args Additional params to pass to child has methods.
+   * @returns {Dictionary<boolean>} The serialized of bitmask.
    */
-  public serialize(...hasParams: any[]): Record<string, boolean> {
-    const constructor = this.constructor as typeof BitField;
-    const serialized: Record<string, boolean> = {};
-    for (const bit of Object.keys(constructor.FLAGS))
-      serialized[bit] = this.has(bit as T, ...hasParams);
+  public serialize(...args: any[]): Dictionary<boolean> {
+    const constructor = this.constructor as typeof BitField,
+      serialized: Record<string, boolean> = {};
+
+    for (const bit of Object.keys(constructor.FLAGS)) {
+      serialized[bit] = this.has(bit as B, ...args);
+    }
+
     return serialized;
   }
 
   /**
-   * Returns an array of Flags that make up this BitField
-   * @param {...any} hasParams Additional params to pass to child has methods
+   * Returns an array of Flags that make up this BitField.
+   *
+   * @param {...any} args Additional params to pass to child has methods.
+   * @returns {string[]}
    */
-  public toArray(...hasParams: any[]): string[] {
+  public toArray(...args: any[]): string[] {
     const constructor = this.constructor as typeof BitField;
+
     return Object.keys(constructor.FLAGS).filter((bit) =>
-      this.has(bit as T, ...hasParams)
+      this.has(bit as B, ...args)
     );
   }
 
   /**
    * The JSON representation of this bitfield.
+   *
    * @returns {number}
    */
   public toJSON(): number {
@@ -191,6 +231,7 @@ export class BitField<T extends BitFieldResolvable> implements BitFieldObject {
 
   /**
    * Defines value behavior of this BitField
+   *
    * @returns {number}
    */
   public valueOf(): number {
@@ -202,8 +243,5 @@ export interface BitFieldObject {
   bitmask: number;
 }
 
-export type BitFieldResolvable =
-  | keyof typeof BitField.FLAGS
-  | number
-  | BitFieldObject
-  | (keyof typeof BitField.FLAGS | number | BitFieldObject)[];
+type bit = keyof typeof BitField.FLAGS | number | BitFieldObject;
+export type BitResolvable = bit | bit[];

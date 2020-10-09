@@ -9,6 +9,7 @@ import { Type } from "../utility/Type";
 export class Pair<A, B> {
   /**
    * Whether this pair is immutable.
+   *
    * @type {boolean}
    * @private
    */
@@ -16,19 +17,23 @@ export class Pair<A, B> {
 
   /**
    * The first value of this pair.
+   *
+   * @type {?any}
    * @private
    */
   #a: A | null;
 
   /**
    * The second value of this pair.
+   *
+   * @type {?any}
    * @private
    */
   #b: B | null;
 
   /**
-   * @param {*} a The first value of this pair.
-   * @param {*} b The second value of this pair.
+   * @param {?any} a The first value of this pair.
+   * @param {?any} b The second value of this pair.
    */
   public constructor(a?: A, b?: B) {
     this.#a = a ?? null;
@@ -38,6 +43,8 @@ export class Pair<A, B> {
 
   /**
    * The first value of this pair.
+   *
+   * @type {?any}
    */
   public get a(): A | null {
     return this.#a;
@@ -45,6 +52,8 @@ export class Pair<A, B> {
 
   /**
    * The second value of this pair.
+   *
+   * @type {?any}
    */
   public get b(): B | null {
     return this.#b;
@@ -52,8 +61,9 @@ export class Pair<A, B> {
 
   /**
    * Creates an immutable pair of values.
-   * @param a
-   * @param b
+   *
+   * @param {any} a Value A of the pair.
+   * @param {any} b Value B of the pair.
    * @constructor
    */
   public static Immutable<A, B>(a: A, b: B): Pair<A, B> {
@@ -64,7 +74,8 @@ export class Pair<A, B> {
 
   /**
    * Set the first value of this pair.
-   * @param {*} value The value.
+   *
+   * @param {any} value The value.
    * @returns {Pair} this pair.
    */
   public setA(value: A): this {
@@ -75,7 +86,8 @@ export class Pair<A, B> {
 
   /**
    * Set the second value of this pair.
-   * @param {*} value The value.
+   *
+   * @param {any} value The value.
    * @returns {Pair} this pair.
    */
   public setB(value: B): this {
@@ -86,6 +98,8 @@ export class Pair<A, B> {
 
   /**
    * Get the string representation of this pair.
+   *
+   * @type {string}
    */
   public toString(): string {
     return `Pair<${new Type(this.#a)}, ${new Type(this.#b)}>`;

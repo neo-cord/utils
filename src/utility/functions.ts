@@ -12,6 +12,7 @@ import type { Class } from "./Extender";
 
 /**
  * A helper function for determining whether something is a class.
+ *
  * @param {any} input
  * @returns {boolean} Whether the input was a class.
  */
@@ -25,11 +26,13 @@ export function isClass(input: unknown): input is Class {
 
 /**
  * A helper function for capitalizing the first letter in the sentence.
+ *
  * @param {string} str
  * @param {boolean} [lowerRest=true]
+ * @returns {string}
  */
 export function capitalize(str: string, lowerRest = true): string {
-  const [ f, ...r ] = str.split("");
+  const [f, ...r] = str.split("");
   return `${f.toUpperCase()}${
     lowerRest ? r.join("").toLowerCase() : r.join("")
   }`;
@@ -37,51 +40,61 @@ export function capitalize(str: string, lowerRest = true): string {
 
 /**
  * A helper function for determining if a value is an event emitter.
+ *
  * @param {any} input
  * @returns {boolean} Whether the input was an emitter.
  */
 export function isEmitter(input: unknown): input is EventEmitterLike {
+  const i = input as EventEmitterLike;
   return (
     input !== "undefined" &&
     input !== void 0 &&
-    typeof (input as EventEmitterLike).on === "function" &&
-    typeof (input as EventEmitterLike).emit === "function"
+    typeof i.addListener === "function" &&
+    typeof i.emit === "function"
   );
 }
 
 /**
  * Returns an array.
- * @param {any[] | any} value
+ *
+ * @template {T} The value.
+ *
+ * @param {T[] | T[]} value
+ * @returns {T[]}
  */
 export function array<T>(value: T | T[]): T[] {
-  return Array.isArray(value) ? value : [ value ];
+  return Array.isArray(value) ? value : [value];
 }
 
 /**
  * A helper function for determining if a value is a string.
- * @param value
- * @since 2.0.0
+ *
+ * @param {any} input
+ * @returns {boolean} Whether the input was a string.
  */
-export function isString(value: unknown): value is string {
-  return value !== null && value !== "undefined" && typeof value === "string";
-}
-
-/**
- * A helper function for determining whether or not a value is a promise,
- * @param value
- */
-export function isPromise(value: unknown): value is Promise<unknown> {
+export function isString(input: unknown): input is string {
   return (
-    value &&
-    typeof (value as Promise<unknown>).then === "function" &&
-    typeof (value as Promise<unknown>).catch === "function"
+    input !== null && typeof input !== "undefined" && typeof input === "string"
   );
 }
 
 /**
+ * A helper function for determining whether or not a value is a promise,
+ *
+ * @param {any} input
+ * @returns {boolean} Whether the input was a promise.
+ */
+export function isPromise<V = unknown>(input: unknown): input is Promise<V> {
+  const i = input as undefined | Promise<V>;
+  return !!i && typeof i?.then === "function" && typeof i?.catch === "function";
+}
+
+/**
  * Check whether or not an object has a value.
- * @param obj The object.
- * @param key The key.
+ *
+ * @param {Dictionary} obj The object.
+ * @param {PropertyKey} key The key.
+ * @returns {boolean} Whether the obj has the provided key.
  */
 export function has<O extends Dictionary, K extends keyof O>(
   obj: O,
@@ -92,7 +105,8 @@ export function has<O extends Dictionary, K extends keyof O>(
 
 /**
  * Pauses the event loop for a set duration of time.
- * @param {number | string} ms The duration in milliseconds.
+ *
+ * @param {number} ms The duration in milliseconds.
  * @returns {Promise<NodeJS.Timeout>}
  */
 export function sleep(ms: number): Promise<NodeJS.Timeout> {
@@ -101,14 +115,16 @@ export function sleep(ms: number): Promise<NodeJS.Timeout> {
 
 /**
  * Walks a directory.
+ *
  * @param {string} directory The directory to walk.
  * @param {WalkOptions} options Options for declaring the depth and extensions.
+ * @returns {string[]} The found files.
  */
 export function walk(directory: string, options: WalkOptions = {}): string[] {
   options = Object.assign(
     {
       depth: null,
-      extensions: [ ".js", ".ts", ".json" ]
+      extensions: [".js", ".ts", ".json"],
     },
     options
   );
@@ -143,6 +159,7 @@ export function walk(directory: string, options: WalkOptions = {}): string[] {
 
 /**
  * Merges objects into one.
+ *
  * @param {Dictionary} objects The objects to merge.
  */
 export function mergeObjects<O extends Dictionary = Dictionary>(
@@ -168,6 +185,7 @@ export function isObject(input: unknown): input is Dictionary {
 
 /**
  * Calls Object#defineProperty on a method or property.
+ *
  * @param {PropertyDescriptor} descriptor The descriptor to pass.
  */
 export function define(descriptor: PropertyDescriptor): PropertyDecorator {
@@ -178,10 +196,15 @@ export function define(descriptor: PropertyDescriptor): PropertyDecorator {
 
 /**
  * Flatten an object.
- * @param {any} obj
- * @param {...any} [props]
+ *
+ * @param {Record<PropertyKey, any>} obj
+ * @param {...any} [props] The properties to include.
+ * @returns {Record<PropertyKey, any>}
  */
-export function flatten(obj: unknown, ...props: any[]): any {
+export function flatten(
+  obj: Record<PropertyKey, unknown>,
+  ...props: any[]
+): Record<PropertyKey, unknown> {
   if (!isObject(obj)) return obj;
 
   const out: Dictionary = {};
@@ -193,10 +216,18 @@ export function flatten(obj: unknown, ...props: any[]): any {
         ? element.valueOf()
         : null;
 
-    if (Array.isArray(element))
-      out[prop] = element.map((e: Array<any>) => flatten(e));
-    else if (typeof valueOf !== "object") out[prop] = valueOf;
-    else if (!elemIsObj) out[prop] = element;
+    let v;
+    if (Array.isArray(element)) {
+      v = element.map((e) => flatten(e));
+    } else if (typeof valueOf !== "object") {
+      v = valueOf;
+    } else if (!elemIsObj) {
+      v = element;
+    }
+
+    if (v) {
+      out[prop] = v;
+    }
   }
 
   return out;
