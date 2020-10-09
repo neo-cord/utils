@@ -162,13 +162,16 @@ export function walk(directory: string, options: WalkOptions = {}): string[] {
  *
  * @param {Dictionary} objects The objects to merge.
  */
-export function mergeObjects<O extends Dictionary = Dictionary>(
-  ...objects: Partial<O>[]
-): O {
-  const o: Dictionary = {};
+export function mergeObjects<
+  O extends Record<PropertyKey, any> = Record<PropertyKey, any>
+>(...objects: Partial<O>[]): O {
+  const o: Record<PropertyKey, any> = {};
   for (const object of objects) {
-    for (const key of Object.keys(object)) {
-      if (o[key] === null || o[key] === void 0) o[key] = object[key];
+    for (const key of Reflect.ownKeys(object)) {
+      if (!Reflect.has(o, key)) {
+        const v = Reflect.get(object, key);
+        Reflect.set(o, key, v);
+      }
     }
   }
 
@@ -197,19 +200,19 @@ export function define(descriptor: PropertyDescriptor): PropertyDecorator {
 /**
  * Flatten an object.
  *
- * @param {Record<PropertyKey, any>} obj
+ * @param {any} obj
  * @param {...any} [props] The properties to include.
  * @returns {Record<PropertyKey, any>}
  */
 export function flatten(
-  obj: Record<PropertyKey, unknown>,
-  ...props: any[]
+  obj: any,
+  ...props: PropertyKey[]
 ): Record<PropertyKey, unknown> {
   if (!isObject(obj)) return obj;
 
   const out: Dictionary = {};
   for (const prop of props) {
-    const element = obj[prop];
+    const element = Reflect.get(obj, prop);
     const elemIsObj = isObject(element);
     const valueOf =
       elemIsObj && typeof element.valueOf === "function"
@@ -226,7 +229,7 @@ export function flatten(
     }
 
     if (v) {
-      out[prop] = v;
+      Reflect.set(out, prop, v);
     }
   }
 
