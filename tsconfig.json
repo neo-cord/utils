@@ -30,19 +30,13 @@
     "importsNotUsedAsValues": "error",
 
     /* Types */
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "forceConsistentCasingInFileNames": true,
 
     /* Module Resolution */
     "resolveJsonModule": true,
     "esModuleInterop": true
   },
-  "include": [
-    "./src/**/*"
-  ],
-  "exclude": [
-    "./node_modules"
-  ]
+  "include": ["./src/**/*"],
+  "exclude": ["./node_modules"]
 }

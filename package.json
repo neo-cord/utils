@@ -17,9 +17,9 @@
   "scripts": {
     "build": "rm -rf dist && tsc --removeComments",
     "build:types": "tsc -d",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
-    "format": "prettier --write src/ && yarn lint:fix"
+    "lint": "eslint  --ext .ts",
+    "lint:fix": "eslint  --ext .ts --fix",
+    "format": "prettier --write . && yarn lint:fix"
   },
   "bugs": {
     "url": "https://github.com/neo-cord/utils/issues"
