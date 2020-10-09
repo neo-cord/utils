@@ -4,27 +4,32 @@
  * See the LICENSE file in the project root for more details.
  */
 
+const INTERVALS = Symbol.for("TimerIntervals");
+const TIMEOUTS = Symbol.for("TimerTimeouts");
+
 export abstract class Timers {
   /**
    * Currently running intervals.
+   *
    * @type {Set<NodeJS.Timeout>}
    * @private
    */
-  private static readonly _intervals: Set<NodeJS.Timeout> = new Set();
+  private static readonly [INTERVALS]: Set<NodeJS.Timeout> = new Set();
 
   /**
    * Currently waiting timeouts.
+   *
    * @type {Set<NodeJS.Timeout>}
    * @private
    */
-  private static readonly _timeouts: Set<NodeJS.Timeout> = new Set();
+  private static readonly [TIMEOUTS]: Set<NodeJS.Timeout> = new Set();
 
   /**
    * Clears all of the current intervals and timeouts.
    */
   public static clear(): void {
-    for (const i of this._intervals) void this.clearInterval(i);
-    for (const i of this._timeouts) void this.clearTimeout(i);
+    for (const i of this[INTERVALS]) void this.clearInterval(i);
+    for (const i of this[TIMEOUTS]) void this.clearTimeout(i);
   }
 
   /**
@@ -39,7 +44,7 @@ export abstract class Timers {
     ...args: any[]
   ): NodeJS.Timeout {
     const interval = setInterval(fn, delay, ...args);
-    void this._intervals.add(interval);
+    void this[INTERVALS].add(interval);
     return interval;
   }
 
@@ -48,7 +53,7 @@ export abstract class Timers {
    * @param {NodeJS.Timeout} interval The interval to clear.
    */
   public static clearInterval(interval: NodeJS.Timeout): typeof Timers {
-    void this._intervals.delete(interval);
+    void this[INTERVALS].delete(interval);
     void clearInterval(interval);
     return Timers;
   }
@@ -65,11 +70,11 @@ export abstract class Timers {
     ...args: any[]
   ): NodeJS.Timeout {
     const timeout = setTimeout(() => {
-      void this._timeouts.delete(timeout);
+      void this[TIMEOUTS].delete(timeout);
       void fn(...args);
     }, delay);
 
-    void this._timeouts.add(timeout);
+    void this[TIMEOUTS].add(timeout);
     return timeout;
   }
 
@@ -78,7 +83,7 @@ export abstract class Timers {
    * @param {NodeJS.Timeout} interval The interval to clear.
    */
   public static clearTimeout(interval: NodeJS.Timeout): typeof Timers {
-    void this._timeouts.delete(interval);
+    void this[TIMEOUTS].delete(interval);
     void clearTimeout(interval);
     return Timers;
   }
