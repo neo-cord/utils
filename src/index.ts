@@ -4,9 +4,6 @@
  * See the LICENSE file in the project root for more details.
  */
 
-import type { EventEmitter } from "events";
-import type { Emitter } from "./utility/Emitter";
-
 export * from "./discord/bitfields/Intents";
 export * from "./discord/bitfields/MessageFlags";
 export * from "./discord/bitfields/Permissions";
@@ -29,6 +26,19 @@ export * from "./utility/Type";
 
 declare global {
   type Dictionary<V = any> = Record<string, V>;
-  type EventEmitterLike = Emitter | EventEmitter;
-  type Tuple<L = any, R = any> = [ L, R ];
+  type Tuple<L = any, R = any> = [L, R];
+
+  interface EventEmitterLike {
+    emit(event: string | symbol, ...args: any[]): boolean | void | number;
+
+    addListener(
+      event: string | symbol,
+      listener: (...args: any[]) => void
+    ): EventEmitterLike | any;
+
+    removeListener(
+      event: string | symbol,
+      listener: (...args: any[]) => void
+    ): EventEmitterLike | any;
+  }
 }
